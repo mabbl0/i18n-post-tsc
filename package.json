@@ -1,0 +1,42 @@
+{
+  "name": "post-tsc-i18n",
+  "version": "0.1.0",
+  "description": "Inject your translations into your compiled JS, so you write your TS as if i18n never existed",
+  "keywords": [
+    "ts",
+    "tsc",
+    "translation",
+    "translate",
+    "i18n"
+  ],
+  "homepage": "https://github.com/mabbl0/post-tsc-i18n#readme",
+  "bugs": {
+    "url": "https://github.com/mabbl0/post-tsc-i18n/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mabbl0/post-tsc-i18n.git"
+  },
+  "license": "MIT",
+  "author": "mabbl0",
+  "type": "commonjs",
+  
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "dts-bundle-generator": "^9.5.1",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=25.8.1"
+  },
+  
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js"
+
+}
