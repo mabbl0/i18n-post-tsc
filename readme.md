@@ -102,11 +102,11 @@ to obtain the JS code:
 ```js
 const post_tsc_i18n_1 = require("post-tsc-i18n");
 
-console.log(post_tsc_i18n_1.translate.indexLang0()); // "hello everyone!"
+console.log( post_tsc_i18n_1.translate.indexLang0 ); // "hello everyone!"
 
-lang("fr");
-console.log(post_tsc_i18n_1.translate.indexLang0()); // "bonjour tout le monde !"
+post_tsc_i18n_1.lang( 1 ); // 1 is the index to the "fr" lang
+console.log( post_tsc_i18n_1.translate.indexLang0 ); // "bonjour tout le monde !"
 
-lang("bzh");
-console.log(post_tsc_i18n_1.translate.indexLang0()); // "demat d'an holl !"
+post_tsc_i18n_1.lang( 2 ); // 2 is the index to the "bzh" lang
+console.log( post_tsc_i18n_1.translate.indexLang0 ); // "demat d'an holl !"
 ```
