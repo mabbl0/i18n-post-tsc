@@ -20,23 +20,27 @@
   "license": "MIT",
   "author": "mabbl0",
   "type": "commonjs",
-  
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+
+  "dependencies": {
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "@types/yargs": "^17.0.35",
     "dts-bundle-generator": "^9.5.1",
     "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=25.8.1"
   },
-  
   "files": [
     "dist"
   ],
   "types": "./dist/index.d.ts",
-  "main": "./dist/index.js"
+  "main": "./dist/index.js",
+  "bin": "dist/bin/post-tsc-i18n.js",
 
+  "scripts": {
+    "build": "tsc"
+  }
 }
