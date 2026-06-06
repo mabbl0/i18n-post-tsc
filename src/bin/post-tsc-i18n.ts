@@ -3,14 +3,14 @@
 //import path from 'path';
 import yargs from 'yargs';
 
-type PtiMode = 'static';
+type PtiMode = 'static' | 'dynamic';
 
 interface ParsedArgs extends yargs.Arguments {
     mode: PtiMode
 }
 
 function parseArgs(): ParsedArgs {
-    return yargs().parserConfiguration({})
+    return yargs( process.argv.slice(2) ).parserConfiguration({})
         .usage('Usage: $0 [options]')
         .demandCommand(0)
         .option('mode', {
@@ -33,8 +33,11 @@ function main(): void {
         case 'static':
             
             break;
+        case 'dynamic':
+            throw "no available yet";
+            break;
         default:
-            throw "";
+            throw "mode unknow";
     }
 }
 
@@ -42,7 +45,7 @@ function main(): void {
 
 try {
 	main();
-} catch (ex) {
-    console.error(`Error: ${(ex as Error).message}`);
+} catch (e) {
+    console.error(`Error: ${(e)}`);
 	process.exit(1);
 }
