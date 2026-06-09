@@ -18,8 +18,8 @@ npm install post-tsc-i18n
 A translate file index.lang.json:
 ```json
 {
-    "src-lang": "en",
-    "output-lang": ["fr", "bzh"],
+    "srcLang": "en",
+    "outputLang": ["fr", "bzh"],
     "ressources": [
         {
             "en": "hello everyone!",
@@ -54,8 +54,8 @@ console.log("Qui est là ?");
 A translate file index.lang.json:
 ```json
 {
-    "src-lang": "en",
-    "output-lang": ["fr", "bzh"],
+    "srcLang": "en",
+    "outputLang": ["fr", "bzh"],
     "ressources": [
         {
             "en": "hello everyone!",

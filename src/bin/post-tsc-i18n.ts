@@ -2,6 +2,7 @@
 
 //import path from 'path';
 import yargs from 'yargs';
+import { readLangFiles } from '../lang-files';
 
 type PtiMode = 'static' | 'dynamic';
 
@@ -31,7 +32,7 @@ function main(): void {
 
     switch (args.mode) {
         case 'static':
-            
+            readLangFiles('test/');
             break;
         case 'dynamic':
             throw "no available yet";
