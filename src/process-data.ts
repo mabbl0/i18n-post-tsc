@@ -11,6 +11,9 @@
 //         ressources: new Map<string, LangFile>()
 //     };
 
+// path.basename('/foo/bar/baz/asdf/quux.html', '.html');
+// // Returns: 'quux'
+
 //     let match : RegExpMatchArray | null
 //     let keyBase: string;
 //     langFiles.forEach((langFile, i) => {

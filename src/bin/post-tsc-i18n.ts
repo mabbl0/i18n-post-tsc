@@ -3,6 +3,7 @@
 //import path from 'path';
 import yargs from 'yargs';
 import { readLangFiles } from '../lang-files';
+import { staticTranslation } from '../static-translation';
 
 type PtiMode = 'static' | 'dynamic';
 
@@ -32,7 +33,7 @@ function main(): void {
 
     switch (args.mode) {
         case 'static':
-            readLangFiles('test/');
+            readLangFiles('src/test/', (langFiles) => staticTranslation('dist/test/', langFiles));
             break;
         case 'dynamic':
             throw "no available yet";
