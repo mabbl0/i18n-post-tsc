@@ -1,6 +1,6 @@
 {
     "srcLang": "en",
-    "outputLang": ["fr", "bzh"],
+    "outLang": ["fr", "bzh"],
     "ressources": [
         {
             "en": "Hello everyone!",
@@ -11,6 +11,10 @@
             "en": "Who is here?",
             "fr": "Qui est là ?",
             "bzh": "Piv zo aze ?"
+        },
+        {
+            "en": "may be ${} person? ${}?",
+            "fr": "peut être ${} personne? ${}?"
         }
     ]
 }

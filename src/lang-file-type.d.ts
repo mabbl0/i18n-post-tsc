@@ -5,7 +5,7 @@
 export interface LangFileData {
     srcFile?: string
     srcLang: string
-    outputLang: string[]
+    outLang: string[]
     ressources: LangTranslation[]
 }
 
@@ -27,6 +27,24 @@ export interface LangFile {
  */
 interface LangTranslation {
     [key: string]: string
+}
+
+/**
+ * path and data ready for static translation
+ */
+export interface StaticLangFile {
+    pathFromSrc: string
+    tr: StaticTranslation[]
+}
+
+/**
+ * Static translation for one files
+ */
+interface StaticTranslation {
+    srcTr: string | string[],
+    outTr: string,
+    interpolation?: boolean,
+    plural?: boolean
 }
 
 /**

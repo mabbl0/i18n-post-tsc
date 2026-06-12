@@ -38,11 +38,11 @@ export function fastRead(filename: string, endCallback: (err: Error|null, data?:
 /**
  * Fast read and write a file
  * @param filename file name
- * @param writeCallback write callback call after readin data
- * @param endCallback callback after error or after write callback
+ * @param getDataToWrite sync function to procees readed file data and return the new data to write
+ * @param endCallback and callback after error or after write callback
  */
-export function fastReadWrite(filename: string, writeCallback: (fd: number, data: Buffer, closeCb: ()=>void) => void, endCallback: (err: Error|null, data?: Buffer) => void) {
-	fs.open(filename, "a+", 0o666, (err, fd) => {
+export function fastReadWrite(filename: string, getDataToWrite: (dataReaded: string) => string, endCallback: (err: Error|null) => void) {
+	fs.open(filename, "r+", 0o666, (err, fd) => {
 		if (err) {
             return endCallback(err);
         }
@@ -65,8 +65,9 @@ export function fastReadWrite(filename: string, writeCallback: (fd: number, data
                     return;
 				}
                 // successfully read
-                writeCallback(fd, data, () => 
-                    fs.close(fd, err => endCallback(err, data))
+
+                fs.write(fd, getDataToWrite(data.toString()), () => 
+                    fs.close(fd, err => endCallback(err))
                 );
 			});
 		});
