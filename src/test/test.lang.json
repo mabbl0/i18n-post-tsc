@@ -14,7 +14,11 @@
         },
         {
             "en": "may be ${} person? ${}?",
-            "fr": "peut être ${} personne? ${}?"
+            "fr": "peut être ${} personne ? ${} ?"
+        },
+        {
+            "en": "${1}'s ${2} cars",
+            "fr": "les ${2} voitures de ${1}"
         }
     ]
 }

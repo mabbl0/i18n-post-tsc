@@ -1,3 +1,4 @@
+import { StrInterpolationTranslation } from "./str-interpolation-translation"
 
 /**
  * Lang file data write by the developer
@@ -37,14 +38,14 @@ export interface StaticLangFile {
     tr: StaticTranslation[]
 }
 
+type StaticTranslation = SimpleStaticTranslation | StrInterpolationTranslation;
+
 /**
  * Static translation for one files
  */
-interface StaticTranslation {
-    srcTr: string | string[],
-    outTr: string,
-    interpolation?: boolean,
-    plural?: boolean
+interface SimpleStaticTranslation {
+    srcTr: RegExp,
+    outTr: string
 }
 
 /**

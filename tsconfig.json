@@ -16,7 +16,7 @@
 		"removeComments": true,
 
     // Environment Settings
-    "target": "es2022",
+    "target": "esnext",
     "module": "commonjs",
     "esModuleInterop": true,
     "types": ["node"]

@@ -1,6 +1,8 @@
 import path from "path";
-import { LangFile, StaticLangFile, StaticTranslation } from "./lang-file-type";
+import { LangFile, SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./lang-file-type";
 import { fastReadWrite } from "./tool/file";
+import { StrInterpolationTranslation } from "./str-interpolation-translation";
+
 
 /**
  * Translate the js files after tsc
@@ -36,17 +38,12 @@ function prepareTranslationData(langFiles: LangFile[], srcLang: string, outLang:
 }
 
 function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation {
-    let isStrInterpolation = srcTr.match(/\$\{.*\}/g) != null;
-    if(isStrInterpolation) {
-        return {
-            srcTr: "\`" + srcTr + "\`",
-            outTr: '\`' + outTr + '\`',
-            interpolation: isStrInterpolation
-        }
+    if(StrInterpolationTranslation.isStrInterpolationTr(srcTr)) {
+        return new StrInterpolationTranslation(srcTr, outTr);
     }
     else {
         return {
-            srcTr: ["\"" + srcTr + "\"", "\'" + srcTr + "\'", "\`" + srcTr + "\`"],
+            srcTr: new RegExp("(\'|\"|\`)" + RegExp.escape(srcTr) + "(\'|\"|\`)", 'g'),
             outTr: '\"' + outTr + '\"'
         }
     }
@@ -71,26 +68,14 @@ function translateFile(pathFileToTranslate: string, staticLangFile: StaticLangFi
  * @param staticLangFile the translation to apply
  */
 function processDataToTranslate(dataReaded: string, staticLangFile: StaticLangFile): string {
-    staticLangFile.tr.forEach( tr => {
-        if((tr.srcTr as Array<string>).forEach!=undefined) {
-            (tr.srcTr as Array<string>).forEach(srcTr =>
-                dataReaded = dataReaded.replaceAll(srcTr, tr.outTr)
-            );
+    staticLangFile.tr.forEach( staticTr => {
+        if((staticTr as StrInterpolationTranslation).applyTranslation != undefined) {
+            dataReaded = (staticTr as StrInterpolationTranslation).applyTranslation(dataReaded);
         }
         else {
-            dataReaded = dataReaded.replaceAll(tr.srcTr as string, tr.outTr);
+            dataReaded = dataReaded.replaceAll((staticTr as SimpleStaticTranslation).srcTr, (staticTr as SimpleStaticTranslation).outTr);
         }
     });
     return dataReaded;
 }
 
-function processReplace(dataReaded: string, tr: StaticTranslation, srcTr: string) {
-    if(tr.interpolation) {
-        return dataReaded.replaceAll(srcTr, (strMatch) => {
-            return ''
-        });
-    }
-    else {
-        return dataReaded.replaceAll(srcTr, tr.outTr);
-    }
-}
