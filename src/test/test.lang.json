@@ -1,7 +1,6 @@
 {
     "srcLang": "en",
-    "outLang": ["fr", "bzh"],
-    "ressources": [
+    "translations": [
         {
             "en": "Hello everyone!",
             "fr": "Bonjour tout le monde !",

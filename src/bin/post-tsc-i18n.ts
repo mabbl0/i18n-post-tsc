@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-//import path from 'path';
 import yargs from 'yargs';
-import { readLangFiles } from '../lang-files';
 import { staticTranslation } from '../static-translation';
+import { setLogLevelByStr } from '../log';
 
 type PtiMode = 'static' | 'dynamic';
 
@@ -30,10 +29,16 @@ function parseArgs(): ParsedArgs {
 
 function main(): void {
 	const args = parseArgs();
+    setLogLevelByStr('debug');
 
     switch (args.mode) {
         case 'static':
-            readLangFiles('src/test/', (langFiles) => staticTranslation('dist/test/', langFiles));
+            staticTranslation({
+                srcDir: 'src/test/',
+                outDir: 'dist/test/',
+                outLang: 'bzh',
+                fallbackLang: ['fr']
+            });
             break;
         case 'dynamic':
             throw "no available yet";

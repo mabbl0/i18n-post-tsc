@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { LangFile, LangFileData } from './lang-file-type';
 import { fastRead } from './tool/file';
+import { log, LogLevel } from './log';
 
 
 
@@ -16,6 +17,7 @@ export function readLangFiles(srcPath: string, callback: (langFiles: LangFile[])
     getLangFiles(srcAbsPath, langFilesPath);
 
     readDataLangFile(langFilesPath, 0, [], (langFiles: LangFile[]) => {
+        log(LogLevel.Verbose, `${langFiles.length} lang files found and readed`);
         callback(langFiles);
     });
 }
@@ -35,6 +37,7 @@ function readDataLangFile(langFilesPath: string[], currentFileIndex: number, lan
     }
 
     fastRead(langFilesPath[currentFileIndex], (err, data) => {
+        // TODO: follow the param langFilesPath and currentFileIndex by argument not in async context
         if (err || data == undefined) {
             console.error(err);
             return;
@@ -42,11 +45,25 @@ function readDataLangFile(langFilesPath: string[], currentFileIndex: number, lan
 
         langFiles.push({
             pathFromSrc: path.basename(langFilesPath[currentFileIndex], '.lang.json') + '.js',
-            data: JSON.parse(data.toString()) as LangFileData
+            data: checkLangFileData( JSON.parse(data.toString()), langFilesPath[currentFileIndex] )
         });
 
         readDataLangFile(langFilesPath, currentFileIndex+1, langFiles, endCallback);
     });
+}
+
+/**
+ * check the data read
+ * @param data data to check
+ * @returns the data checked
+ */
+function checkLangFileData(data: LangFileData, filePath: string): LangFileData {
+    if(data.srcLang == undefined ||
+        data.translations == undefined
+    ) {
+        throw `the ${filePath} lang file has not the require data`;
+    }
+    return data;
 }
 
 /**
@@ -61,6 +78,7 @@ function getLangFiles(dirPath: string, langFilesPath: string[]) {
             getLangFiles(path.format({ dir: dirPath, base: content.name }), langFilesPath);
         }
         else if (isLangFile(content.name)) {
+            log(LogLevel.Debug, `find '${content.name}' file`);
             langFilesPath.push(path.format({ dir: dirPath, base: content.name }));
         }
     });

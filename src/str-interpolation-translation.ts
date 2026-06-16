@@ -1,3 +1,4 @@
+import { log, LogLevel } from "./log";
 
 // regex to find the ${} content
 const reStrInter = /\$\{[^\}]*\}/g;
@@ -63,6 +64,9 @@ export class StrInterpolationTranslation {
 
         // initiate the output translation split
         this.outTrSplit = '`'.concat(langFileOutTr, '`').split(reStrInter);
+
+        log(LogLevel.Debug, 'new Str Interpolation Translation created');
+        log(LogLevel.Debug, this);
     }
 
     /**
@@ -71,8 +75,7 @@ export class StrInterpolationTranslation {
      * @returns the text with the translation
      */
     applyTranslation(text: string): string {
-        console.log(this);
-        
+        log(LogLevel.Debug, 'apply str interpolation Translation');
         return text.replaceAll(this.reSrcTr, this.translateOneStr.bind(this));
     }
 

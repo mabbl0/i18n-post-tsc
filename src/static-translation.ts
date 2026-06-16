@@ -1,44 +1,96 @@
 import path from "path";
-import { LangFile, SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./lang-file-type";
+import { LangFile, LangTranslation, SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./lang-file-type";
 import { fastReadWrite } from "./tool/file";
 import { StrInterpolationTranslation } from "./str-interpolation-translation";
+import { readLangFiles } from "./lang-files";
+import { StaticTranslationOption } from "./translation-option";
+import { log, LogLevel } from "./log";
 
 
 /**
  * Translate the js files after tsc
  * @param distDir the directory to translate the files
- * @param langFiles the files lang data
+ * @param srcPath the path to the source directory
  */
-export function staticTranslation(distDir: string, langFiles: LangFile[]) {
-    let distAbsPath = path.resolve(distDir);
-    let staticLangFiles = prepareTranslationData(langFiles, 'en', 'fr');
-    staticLangFiles.forEach( staticLangF => {
-        translateFile( path.format({dir: distAbsPath, base: staticLangF.pathFromSrc}), staticLangF);
+export function staticTranslation(staticOptionTr: StaticTranslationOption) {
+    log(LogLevel.Verbose, `Static Translation of the ${staticOptionTr.srcDir} source path`);
+    readLangFiles(staticOptionTr.srcDir, langFiles => {
+        let distAbsPath = path.resolve(staticOptionTr.outDir);
+        let staticLangFiles = prepareTranslationData(langFiles, staticOptionTr);
+
+        staticLangFiles.forEach(staticLangF => {
+            translateFile(path.format({ dir: distAbsPath, base: staticLangF.pathFromSrc }), staticLangF);
+        });
     });
 }
 
-function prepareTranslationData(langFiles: LangFile[], srcLang: string, outLang: string): StaticLangFile[] {
+function prepareTranslationData(langFiles: LangFile[], staticOptTr: StaticTranslationOption): StaticLangFile[] {
     let staticLangFiles: StaticLangFile[] = [];
     let staticLangF: StaticLangFile;
-    langFiles.forEach( langF => {        
-        if(langF.data.srcLang == srcLang && langF.data.outLang.includes(outLang)) {
-            staticLangF = {
-                pathFromSrc: langF.pathFromSrc,
-                tr: []
-            };
-            langF.data.ressources.forEach(tr => {
-                if(tr[srcLang] != undefined && tr[outLang] != undefined) {
-                    staticLangF.tr.push( prepareOneTranslation(tr[srcLang], tr[outLang]) );
-                }
-            });
-            staticLangFiles.push(staticLangF);
+    let outTr: string|undefined;
+    let outLangWanted: string[];
+    for (let i = 0; i < langFiles.length; i++) {
+        log(LogLevel.Debug, `start to prepare '${langFiles[i].pathFromSrc}' file data`);
+        log(LogLevel.Debug, langFiles[i].data);
+
+        if (langFiles[i].data.srcLang == staticOptTr.outLang) {
+            continue;
         }
-    });
+        if ( !checkFileOutLang(langFiles[i].data.outLang, staticOptTr) ) {
+            continue;
+        }
+        outLangWanted = [staticOptTr.outLang].concat(staticOptTr.fallbackLang);
+
+        staticLangF = {
+            pathFromSrc: langFiles[i].pathFromSrc,
+            tr: []
+        };
+        langFiles[i].data.translations.forEach(tr => {
+            if(tr[langFiles[i].data.srcLang] != undefined) {
+                outTr = chooseOutTr(tr, outLangWanted);
+                if(outTr != undefined && outTr!=langFiles[i].data.srcLang) {
+                    staticLangF.tr.push( prepareOneTranslation(tr[langFiles[i].data.srcLang], outTr) );
+                }
+            }
+        });
+        staticLangFiles.push(staticLangF);
+    }
+
+    log(LogLevel.Verbose, 'finish to prepare the data readed');
+    log(LogLevel.Debug, staticLangFiles);
     return staticLangFiles;
 }
 
+function checkFileOutLang(fileOutLang: string[] | undefined, staticOptTr: StaticTranslationOption): boolean {
+    if(fileOutLang==undefined) {
+        // no check if out lang is not indicated by the files
+        return true;
+    }
+    if(fileOutLang.includes(staticOptTr.outLang)) {
+        return true;
+    }
+    for (let i = 0; i < staticOptTr.fallbackLang.length; i++) {
+        if(fileOutLang.includes(staticOptTr.fallbackLang[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+function chooseOutTr(tr: LangTranslation, outLangWanted: string[]): string | undefined {
+    for (let i = 0; i < outLangWanted.length; i++) {
+        if(tr[outLangWanted[i]] != undefined) {
+            return tr[outLangWanted[i]];
+        }
+    }
+    return undefined;
+}
+
+
 function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation {
-    if(StrInterpolationTranslation.isStrInterpolationTr(srcTr)) {
+    if (StrInterpolationTranslation.isStrInterpolationTr(srcTr)) {
         return new StrInterpolationTranslation(srcTr, outTr);
     }
     else {
@@ -50,16 +102,22 @@ function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation 
 }
 
 function translateFile(pathFileToTranslate: string, staticLangFile: StaticLangFile) {
-    if(staticLangFile.tr.length == 0) {
-        console.error(`empty translation for ${staticLangFile.pathFromSrc}`);
+    log(LogLevel.Verbose, `Start to translate the '${pathFileToTranslate}' file`);
+    if (staticLangFile.tr.length == 0) {
+        log(LogLevel.Error, `empty translation for ${staticLangFile.pathFromSrc}`);
         return;
     }
 
-    fastReadWrite(pathFileToTranslate, 
+    fastReadWrite(pathFileToTranslate,
         (dataReaded) => processDataToTranslate(dataReaded, staticLangFile)
-    , (err) => {
-        if(err) console.error(err);
-    });
+        , (err) => {
+            if (err) {
+                log(LogLevel.Error, err);
+            }
+            else {
+                log(LogLevel.Verbose, `Successfully translate the '${pathFileToTranslate}' file`);
+            }
+        });
 }
 
 /**
@@ -68,11 +126,14 @@ function translateFile(pathFileToTranslate: string, staticLangFile: StaticLangFi
  * @param staticLangFile the translation to apply
  */
 function processDataToTranslate(dataReaded: string, staticLangFile: StaticLangFile): string {
-    staticLangFile.tr.forEach( staticTr => {
-        if((staticTr as StrInterpolationTranslation).applyTranslation != undefined) {
+    log(LogLevel.Debug, 'start file translation');
+    staticLangFile.tr.forEach(staticTr => {
+        log(LogLevel.Debug, staticTr);
+        if ((staticTr as StrInterpolationTranslation).applyTranslation != undefined) {
             dataReaded = (staticTr as StrInterpolationTranslation).applyTranslation(dataReaded);
         }
         else {
+            log(LogLevel.Debug, 'apply simple static translation');
             dataReaded = dataReaded.replaceAll((staticTr as SimpleStaticTranslation).srcTr, (staticTr as SimpleStaticTranslation).outTr);
         }
     });

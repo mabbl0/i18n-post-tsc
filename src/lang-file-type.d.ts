@@ -6,8 +6,8 @@ import { StrInterpolationTranslation } from "./str-interpolation-translation"
 export interface LangFileData {
     srcFile?: string
     srcLang: string
-    outLang: string[]
-    ressources: LangTranslation[]
+    outLang?: string[]
+    translations: LangTranslation[]
 }
 
 /**
