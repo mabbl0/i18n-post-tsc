@@ -34,7 +34,8 @@ interface LangTranslation {
  * path and data ready for static translation
  */
 export interface StaticLangFile {
-    pathFromSrc: string
+    fileName: string
+    pathToJs: string[]
     tr: StaticTranslation[]
 }
 

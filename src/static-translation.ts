@@ -13,13 +13,13 @@ import { log, LogLevel } from "./log";
  * @param srcPath the path to the source directory
  */
 export function staticTranslation(staticOptionTr: StaticTranslationOption) {
-    log(LogLevel.Verbose, `Static Translation of the ${staticOptionTr.srcDir} source path`);
+    log(LogLevel.Verbose, `Static Translation of the '${staticOptionTr.srcDir}' source path`);
     readLangFiles(staticOptionTr.srcDir, langFiles => {
         let distAbsPath = path.resolve(staticOptionTr.outDir);
         let staticLangFiles = prepareTranslationData(langFiles, staticOptionTr);
 
         staticLangFiles.forEach(staticLangF => {
-            translateFile(path.format({ dir: distAbsPath, base: staticLangF.pathFromSrc }), staticLangF);
+            translateFile(distAbsPath, staticLangF);
         });
     });
 }
@@ -39,12 +39,28 @@ function prepareTranslationData(langFiles: LangFile[], staticOptTr: StaticTransl
         if ( !checkFileOutLang(langFiles[i].data.outLang, staticOptTr) ) {
             continue;
         }
+
+        // initiate the list of the lang output wanted
         outLangWanted = [staticOptTr.outLang].concat(staticOptTr.fallbackLang);
 
+        // initiate the translation object for the file
         staticLangF = {
-            pathFromSrc: langFiles[i].pathFromSrc,
+            fileName: langFiles[i].pathFromSrc,
+            pathToJs: [langFiles[i].pathFromSrc],
             tr: []
         };
+
+        // add possible path to the file
+        if(langFiles[i].data.srcFile != undefined) {
+            if( path.extname(langFiles[i].data.srcFile as string).length == 0) {
+                staticLangF.pathToJs.push((langFiles[i].data.srcFile as string) + '.js');
+            }
+            else {
+                staticLangF.pathToJs.push(langFiles[i].data.srcFile as string);
+            }
+        }
+
+        // test and prepare all translation for the file
         langFiles[i].data.translations.forEach(tr => {
             if(tr[langFiles[i].data.srcLang] != undefined) {
                 outTr = chooseOutTr(tr, outLangWanted);
@@ -53,6 +69,8 @@ function prepareTranslationData(langFiles: LangFile[], staticOptTr: StaticTransl
                 }
             }
         });
+
+        // the file is ready to be translate
         staticLangFiles.push(staticLangF);
     }
 
@@ -101,31 +119,57 @@ function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation 
     }
 }
 
-function translateFile(pathFileToTranslate: string, staticLangFile: StaticLangFile) {
-    log(LogLevel.Verbose, `Start to translate the '${pathFileToTranslate}' file`);
-    if (staticLangFile.tr.length == 0) {
-        log(LogLevel.Error, `empty translation for ${staticLangFile.pathFromSrc}`);
+function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
+    if (distAbsPath.length == 0) {
+        log(LogLevel.Error, `empty absolute dist path: ${distAbsPath}`);
         return;
     }
 
-    fastReadWrite(pathFileToTranslate,
-        (dataReaded) => processDataToTranslate(dataReaded, staticLangFile)
+    log(LogLevel.Verbose, `Start to translate the '${staticLangFile.fileName}' file`);
+    if (staticLangFile.pathToJs.length == 0) {
+        log(LogLevel.Error, `empty path to file ${staticLangFile.fileName}`);
+        return;
+    }
+    if (staticLangFile.tr.length == 0) {
+        log(LogLevel.Error, `empty translation for ${staticLangFile.fileName}`);
+        return;
+    }
+
+    readWriteTranslateFile(distAbsPath, staticLangFile, 0);
+}
+
+function readWriteTranslateFile(distAbsPath: string, staticLangFile: StaticLangFile, pathToTest: number) {
+    if(pathToTest >= staticLangFile.pathToJs.length) {
+        log(LogLevel.Error, `Fail to find the file to translate: ${staticLangFile.fileName}`);
+        return;
+    }
+
+    let absPath = path.format({ dir: distAbsPath, base: staticLangFile.pathToJs[pathToTest] });
+    fastReadWrite( absPath,
+        (dataReaded) => processDataTranslate(dataReaded, staticLangFile)
         , (err) => {
+            // Error management
             if (err) {
-                log(LogLevel.Error, err);
+                if(pathToTest+1 < staticLangFile.pathToJs.length) {
+                    log(LogLevel.Verbose, `try an other path, fail to find the path: ${absPath}`);
+                    readWriteTranslateFile(distAbsPath, staticLangFile, pathToTest+1);
+                }
+                else {
+                    log(LogLevel.Error, err);
+                }
             }
             else {
-                log(LogLevel.Verbose, `Successfully translate the '${pathFileToTranslate}' file`);
+                log(LogLevel.Verbose, `Successfully translate the '${staticLangFile.fileName}' file`);
             }
         });
 }
 
 /**
- * process the data to translate
+ * process the data to translation
  * @param dataReaded the data readed from the file
  * @param staticLangFile the translation to apply
  */
-function processDataToTranslate(dataReaded: string, staticLangFile: StaticLangFile): string {
+function processDataTranslate(dataReaded: string, staticLangFile: StaticLangFile): string {
     log(LogLevel.Debug, 'start file translation');
     staticLangFile.tr.forEach(staticTr => {
         log(LogLevel.Debug, staticTr);

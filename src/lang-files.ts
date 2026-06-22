@@ -4,7 +4,24 @@ import { LangFile, LangFileData } from './lang-file-type';
 import { fastRead } from './tool/file';
 import { log, LogLevel } from './log';
 
+const langFileExt = '.lang.json';
+const reExt = /\w+\.lang\.json$/g;
 
+/**
+ * Parameter to read the lang files
+ * @param srcAbsPath absolute path to the source directory
+ * @param langFilesPath path to the files to read
+ * @param currentFileIndex the index of the current data to read
+ * @param langFiles data lang files
+ * @param endCallback callback after read all lang files
+ */
+interface ReadLangFileParam {
+    srcAbsPath: string,
+    langFilesPath: string[], 
+    currentFileIndex: number, 
+    langFiles: LangFile[], 
+    endCallback: (langFiles: LangFile[]) => void
+}
 
 /**
  * find and read the langages files
@@ -15,10 +32,17 @@ export function readLangFiles(srcPath: string, callback: (langFiles: LangFile[])
 
     let langFilesPath: string[] = [];
     getLangFiles(srcAbsPath, langFilesPath);
+    log(LogLevel.Verbose, `${langFilesPath.length} lang files found`);
 
-    readDataLangFile(langFilesPath, 0, [], (langFiles: LangFile[]) => {
-        log(LogLevel.Verbose, `${langFiles.length} lang files found and readed`);
-        callback(langFiles);
+    readDataLangFile({
+        srcAbsPath: srcAbsPath,
+        langFilesPath: langFilesPath,
+        currentFileIndex: 0,
+        langFiles: [],
+        endCallback(langFiles) {
+            log(LogLevel.Verbose, `${langFiles.length} lang files readed`);
+            callback(langFiles);
+        },
     });
 }
 
@@ -30,26 +54,33 @@ export function readLangFiles(srcPath: string, callback: (langFiles: LangFile[])
  * @param endCallback callback after read all lang files
  * @returns 
  */
-function readDataLangFile(langFilesPath: string[], currentFileIndex: number, langFiles: LangFile[], endCallback: (langFiles: LangFile[]) => void) {
-    if (currentFileIndex >= langFilesPath.length) {
-        endCallback(langFiles);
+function readDataLangFile(readParam: ReadLangFileParam) {
+    if (readParam.currentFileIndex >= readParam.langFilesPath.length) {
+        readParam.endCallback(readParam.langFiles);
         return;
     }
 
-    fastRead(langFilesPath[currentFileIndex], (err, data) => {
-        // TODO: follow the param langFilesPath and currentFileIndex by argument not in async context
-        if (err || data == undefined) {
-            console.error(err);
+    fastRead(readParam.langFilesPath[readParam.currentFileIndex], (err, data, rParam) => {
+        if (err || data == undefined || rParam == undefined) {
+            log(LogLevel.Error, err);
             return;
         }
-
-        langFiles.push({
-            pathFromSrc: path.basename(langFilesPath[currentFileIndex], '.lang.json') + '.js',
-            data: checkLangFileData( JSON.parse(data.toString()), langFilesPath[currentFileIndex] )
+        
+        rParam.langFiles.push({
+            pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex] ).slice(0, -langFileExt.length) + '.js',
+            data: checkLangFileData( JSON.parse(data.toString()), rParam.langFilesPath[rParam.currentFileIndex] )
         });
-
-        readDataLangFile(langFilesPath, currentFileIndex+1, langFiles, endCallback);
-    });
+        log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
+        
+        // continue to read the next files
+        readDataLangFile({
+            srcAbsPath: rParam.srcAbsPath,
+            langFilesPath: rParam.langFilesPath,
+            currentFileIndex: rParam.currentFileIndex +1,
+            langFiles: rParam.langFiles,
+            endCallback: rParam.endCallback
+        });
+    }, readParam);
 }
 
 /**
@@ -67,7 +98,7 @@ function checkLangFileData(data: LangFileData, filePath: string): LangFileData {
 }
 
 /**
- * get recursively all the lang files from a directories
+ * get recursively all the relative lang file path from a directory
  * @param dirPath path to directory to search
  * @param langFilesPath list of the lang files found
  */
@@ -78,8 +109,8 @@ function getLangFiles(dirPath: string, langFilesPath: string[]) {
             getLangFiles(path.format({ dir: dirPath, base: content.name }), langFilesPath);
         }
         else if (isLangFile(content.name)) {
-            log(LogLevel.Debug, `find '${content.name}' file`);
-            langFilesPath.push(path.format({ dir: dirPath, base: content.name }));
+            log(LogLevel.Verbose, `find '${content.name}' file`);
+            langFilesPath.push( path.format({ dir: dirPath, base: content.name }) );
         }
     });
 }
@@ -91,6 +122,6 @@ function getLangFiles(dirPath: string, langFilesPath: string[]) {
  */
 function isLangFile(pathFile: string): boolean {
     return pathFile != undefined && pathFile.length != undefined &&
-        pathFile.match(/\w+\.lang\.json$/g) != null;
+        pathFile.search( reExt ) != -1;
 }
 
