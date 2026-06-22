@@ -65,12 +65,17 @@ function readDataLangFile(readParam: ReadLangFileParam) {
             log(LogLevel.Error, err);
             return;
         }
+
+        // check the data
+        let jsonData = JSON.parse(data.toString());
+        if( checkLangFileData( jsonData, rParam.langFilesPath[rParam.currentFileIndex] ) ) {
+            rParam.langFiles.push({
+                pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex] ).slice(0, -langFileExt.length) + '.js',
+                data: jsonData
+            });
+            log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
+        }
         
-        rParam.langFiles.push({
-            pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex] ).slice(0, -langFileExt.length) + '.js',
-            data: checkLangFileData( JSON.parse(data.toString()), rParam.langFilesPath[rParam.currentFileIndex] )
-        });
-        log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
         
         // continue to read the next files
         readDataLangFile({
@@ -86,15 +91,25 @@ function readDataLangFile(readParam: ReadLangFileParam) {
 /**
  * check the data read
  * @param data data to check
- * @returns the data checked
+ * @returns if the data are correcte or not
  */
-function checkLangFileData(data: LangFileData, filePath: string): LangFileData {
+function checkLangFileData(data: LangFileData, filePath: string): boolean {
     if(data.srcLang == undefined ||
         data.translations == undefined
     ) {
-        throw `the ${filePath} lang file has not the require data`;
+        log(LogLevel.Error, `the '${filePath}' lang file has not the require data`);
+        return false;
     }
-    return data;
+
+    // check if every translation the source lang
+    for (let i = 0; i < data.translations.length; i++) {
+        if(data.translations[i][data.srcLang] == undefined) {
+            log(LogLevel.Error, `the translation ${data.translations[i].toString()} from the '${filePath}' lang file don't containt the source langage`);
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 /**
