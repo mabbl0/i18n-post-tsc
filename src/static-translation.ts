@@ -3,20 +3,19 @@ import { LangFile, LangTranslation, SimpleStaticTranslation, StaticLangFile, Sta
 import { fastReadWrite } from "./tool/file";
 import { StrInterpolationTranslation } from "./str-interpolation-translation";
 import { readLangFiles } from "./lang-files";
-import { StaticTranslationOption } from "./translation-option";
+import { StaticTranslationParam } from "./translation-option";
 import { log, LogLevel } from "./tool/log";
 
 
 /**
  * Translate the js files after tsc
- * @param distDir the directory to translate the files
- * @param srcPath the path to the source directory
+ * @param staticTrParam the parameter to the static translation
  */
-export function staticTranslation(staticOptionTr: StaticTranslationOption) {
-    log(LogLevel.Verbose, `Static Translation of the '${staticOptionTr.srcDir}' source path`);
-    readLangFiles(staticOptionTr.srcDir, langFiles => {
-        let distAbsPath = path.resolve(staticOptionTr.outDir);
-        let staticLangFiles = prepareTranslationData(langFiles, staticOptionTr);
+export function staticTranslation(staticTrParam: StaticTranslationParam) {
+    log(LogLevel.Verbose, `Static Translation of the '${staticTrParam.srcDir}' source path`);
+    readLangFiles(staticTrParam.srcDir, langFiles => {
+        let distAbsPath = path.resolve(staticTrParam.outDir);
+        let staticLangFiles = prepareTranslationData(langFiles, staticTrParam);
 
         staticLangFiles.forEach(staticLangF => {
             translateFile(distAbsPath, staticLangF);
@@ -24,7 +23,13 @@ export function staticTranslation(staticOptionTr: StaticTranslationOption) {
     });
 }
 
-function prepareTranslationData(langFiles: LangFile[], staticOptTr: StaticTranslationOption): StaticLangFile[] {
+/**
+ * Prepare the translation data
+ * @param langFiles the lang files with translation data
+ * @param staticTrParam the parameter to the static translation
+ * @returns the static translation data prepared
+ */
+function prepareTranslationData(langFiles: LangFile[], staticTrParam: StaticTranslationParam): StaticLangFile[] {
     let staticLangFiles: StaticLangFile[] = [];
     let staticLangF: StaticLangFile;
     let outTr: string|undefined;
@@ -33,15 +38,15 @@ function prepareTranslationData(langFiles: LangFile[], staticOptTr: StaticTransl
         log(LogLevel.Debug, `start to prepare '${langFiles[i].pathFromSrc}' file data`);
         log(LogLevel.Debug, langFiles[i].data);
 
-        if (langFiles[i].data.srcLang == staticOptTr.outLang) {
+        if (langFiles[i].data.srcLang == staticTrParam.outLang) {
             continue;
         }
-        if ( !checkFileOutLang(langFiles[i].data.outLang, staticOptTr) ) {
+        if ( !checkFileOutLang(langFiles[i].data.outLang, staticTrParam) ) {
             continue;
         }
 
         // initiate the list of the lang output wanted
-        outLangWanted = [staticOptTr.outLang].concat(staticOptTr.fallbackLang);
+        outLangWanted = [staticTrParam.outLang].concat(staticTrParam.fallbackLang);
 
         // initiate the translation object for the file
         staticLangF = {
@@ -79,16 +84,22 @@ function prepareTranslationData(langFiles: LangFile[], staticOptTr: StaticTransl
     return staticLangFiles;
 }
 
-function checkFileOutLang(fileOutLang: string[] | undefined, staticOptTr: StaticTranslationOption): boolean {
+/**
+ * Check if the file content the correct output langage for the translation
+ * @param fileOutLang the langage indicate by the file
+ * @param staticTrParam the parameter to the static translation
+ * @returns indicate if the output langages corresponding to the file data
+ */
+function checkFileOutLang(fileOutLang: string[] | undefined, staticTrParam: StaticTranslationParam): boolean {
     if(fileOutLang==undefined) {
         // no check if out lang is not indicated by the files
         return true;
     }
-    if(fileOutLang.includes(staticOptTr.outLang)) {
+    if(fileOutLang.includes(staticTrParam.outLang)) {
         return true;
     }
-    for (let i = 0; i < staticOptTr.fallbackLang.length; i++) {
-        if(fileOutLang.includes(staticOptTr.fallbackLang[i])) {
+    for (let i = 0; i < staticTrParam.fallbackLang.length; i++) {
+        if(fileOutLang.includes(staticTrParam.fallbackLang[i])) {
             return true;
         }
     }
@@ -96,7 +107,12 @@ function checkFileOutLang(fileOutLang: string[] | undefined, staticOptTr: Static
 }
 
 
-
+/**
+ * Choose a output langage translation, if possible
+ * @param tr the data translation
+ * @param outLangWanted the output langages wanted list
+ * @returns the output langage to translate
+ */
 function chooseOutTr(tr: LangTranslation, outLangWanted: string[]): string | undefined {
     for (let i = 0; i < outLangWanted.length; i++) {
         if(tr[outLangWanted[i]] != undefined) {
@@ -106,7 +122,12 @@ function chooseOutTr(tr: LangTranslation, outLangWanted: string[]): string | und
     return undefined;
 }
 
-
+/**
+ * Prepare one translation
+ * @param srcTr the source translation
+ * @param outTr the output translation
+ * @returns the static translation
+ */
 function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation {
     if (StrInterpolationTranslation.isStrInterpolationTr(srcTr)) {
         return new StrInterpolationTranslation(srcTr, outTr);
@@ -119,6 +140,11 @@ function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation 
     }
 }
 
+/**
+ * Static Translate to a file
+ * @param distAbsPath the absolute path to the output directory
+ * @param staticLangFile the static translation information for the file
+ */
 function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
     if (distAbsPath.length == 0) {
         log(LogLevel.Error, `empty absolute dist path: ${distAbsPath}`);
@@ -138,6 +164,13 @@ function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
     readWriteTranslateFile(distAbsPath, staticLangFile, 0);
 }
 
+/**
+ * Recursive read and write to translate a file
+ * try different path
+ * @param distAbsPath the absolute path to the output directory
+ * @param staticLangFile the static translation information for the file
+ * @param pathToTest the path index to test
+ */
 function readWriteTranslateFile(distAbsPath: string, staticLangFile: StaticLangFile, pathToTest: number) {
     if(pathToTest >= staticLangFile.pathToJs.length) {
         log(LogLevel.Error, `Fail to find the file to translate: ${staticLangFile.fileName}`);

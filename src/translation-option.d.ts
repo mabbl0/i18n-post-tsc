@@ -1,12 +1,18 @@
 
-
-export interface TranslationOption {
+/** the parameter to a translation */
+export interface TranslationParam {
+    /** path to the source directory */
     srcDir: string
+    /** path to the output / dist directory */
     outDir: string
 }
 
-
-export interface StaticTranslationOption extends TranslationOption {
+/**
+ * The parameter to the static translation
+ */
+export interface StaticTranslationParam extends TranslationParam {
+    /** output langage result after translation */
     outLang: string
+    /** fallback langage if outLang is not possible */
     fallbackLang: string[]
 }
