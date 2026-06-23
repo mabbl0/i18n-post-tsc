@@ -1,4 +1,5 @@
 export const enum LogLevel {
+    None,
     Error,
     Warning,
     Info,

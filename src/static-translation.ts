@@ -4,7 +4,7 @@ import { fastReadWrite } from "./tool/file";
 import { StrInterpolationTranslation } from "./str-interpolation-translation";
 import { readLangFiles } from "./lang-files";
 import { StaticTranslationOption } from "./translation-option";
-import { log, LogLevel } from "./log";
+import { log, LogLevel } from "./tool/log";
 
 
 /**

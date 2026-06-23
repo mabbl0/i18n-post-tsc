@@ -1,4 +1,4 @@
-import { log, LogLevel } from "./log";
+import { log, LogLevel } from "./tool/log";
 
 // regex to find the ${} content
 const reStrInter = /\$\{[^\}]*\}/g;

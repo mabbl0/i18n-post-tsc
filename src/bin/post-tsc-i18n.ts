@@ -2,7 +2,7 @@
 
 import yargs from 'yargs';
 import { staticTranslation } from '../static-translation';
-import { setLogLevelByStr } from '../log';
+import { setLogLevelByStr } from '../tool/log';
 
 type PtiMode = 'static' | 'dynamic';
 

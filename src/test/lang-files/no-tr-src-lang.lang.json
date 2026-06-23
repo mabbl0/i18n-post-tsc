@@ -1,0 +1,12 @@
+{
+    "srcLang": "en",
+    "translations": [
+        {
+            "fr": "Bonjour tout le monde !"
+        },
+        {
+            "en": "Who is here?",
+            "fr": "Qui est là ?"
+        }
+    ]
+}

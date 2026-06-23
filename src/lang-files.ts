@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { LangFile, LangFileData } from './lang-file-type';
 import { fastRead } from './tool/file';
-import { log, LogLevel } from './log';
+import { log, LogLevel } from './tool/log';
 
 const langFileExt = '.lang.json';
 const reExt = /\w+\.lang\.json$/g;
@@ -61,21 +61,25 @@ function readDataLangFile(readParam: ReadLangFileParam) {
     }
 
     fastRead(readParam.langFilesPath[readParam.currentFileIndex], (err, data, rParam) => {
-        if (err || data == undefined || rParam == undefined) {
-            log(LogLevel.Error, err);
+        if(rParam == undefined) {
+            // shall not append
+            log(LogLevel.Error, 'no parameter returned');
             return;
         }
-
-        // check the data
-        let jsonData = JSON.parse(data.toString());
-        if( checkLangFileData( jsonData, rParam.langFilesPath[rParam.currentFileIndex] ) ) {
-            rParam.langFiles.push({
-                pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex] ).slice(0, -langFileExt.length) + '.js',
-                data: jsonData
-            });
-            log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
+        else if (err || data == undefined) {
+            log(LogLevel.Error, err);
         }
-        
+        else if(data.length != 0) {
+            // check the data
+            let jsonData = JSON.parse(data.toString()) as LangFileData;
+            if( checkLangFileData( jsonData, rParam.langFilesPath[rParam.currentFileIndex] ) ) {
+                rParam.langFiles.push({
+                    pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex] ).slice(0, -langFileExt.length) + '.js',
+                    data: jsonData
+                });
+                log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
+            }
+        }
         
         // continue to read the next files
         readDataLangFile({
@@ -95,7 +99,8 @@ function readDataLangFile(readParam: ReadLangFileParam) {
  */
 function checkLangFileData(data: LangFileData, filePath: string): boolean {
     if(data.srcLang == undefined ||
-        data.translations == undefined
+        data.translations == undefined ||
+        data.translations.length == 0
     ) {
         log(LogLevel.Error, `the '${filePath}' lang file has not the require data`);
         return false;
