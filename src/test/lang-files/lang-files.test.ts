@@ -3,10 +3,10 @@ import { readLangFiles } from '../../lang-files';
 import { LangFile } from '../../lang-file-type';
 import { LogLevel, setLogLevel } from '../../tool/log';
 
-setLogLevel(LogLevel.Verbose);
+setLogLevel(LogLevel.None);
 
 describe('Read lang files in test directory', () => {
-    test("Read the files in ./src/test/lang-files/", async () => {
+    test("Read the files in ./test/lang-files/ directory", async () => {
         expect.hasAssertions();
 
         const lFiles: LangFile[] = await new Promise((resolve) => {

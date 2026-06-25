@@ -210,7 +210,7 @@ function processDataTranslate(dataReaded: string, staticLangFile: StaticLangFile
             dataReaded = (staticTr as StrInterpolationTranslation).applyTranslation(dataReaded);
         }
         else {
-            log(LogLevel.Debug, 'apply simple static translation');
+            log(LogLevel.Debug, 'apply one simple static translation');
             dataReaded = dataReaded.replaceAll((staticTr as SimpleStaticTranslation).srcTr, (staticTr as SimpleStaticTranslation).outTr);
         }
     });

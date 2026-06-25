@@ -75,7 +75,7 @@ export class StrInterpolationTranslation {
      * @returns the text with the translation
      */
     applyTranslation(text: string): string {
-        log(LogLevel.Debug, 'apply str interpolation Translation');
+        log(LogLevel.Debug, 'apply one str interpolation Translation');
         return text.replaceAll(this.reSrcTr, this.translateOneStr.bind(this));
     }
 

@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "files": ["src/bin/post-tsc-i18n.ts"]
+}
