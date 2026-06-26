@@ -1,4 +1,3 @@
-import { StrInterpolationTranslation } from "./str-interpolation-translation"
 
 /**
  * Lang file data write by the developer
@@ -28,25 +27,6 @@ export interface LangFile {
  */
 interface LangTranslation {
     [key: string]: string
-}
-
-/**
- * path and data ready for static translation
- */
-export interface StaticLangFile {
-    fileName: string
-    pathToJs: string[]
-    tr: StaticTranslation[]
-}
-
-type StaticTranslation = SimpleStaticTranslation | StrInterpolationTranslation;
-
-/**
- * Static translation for one files
- */
-interface SimpleStaticTranslation {
-    srcTr: RegExp,
-    outTr: string
 }
 
 /**

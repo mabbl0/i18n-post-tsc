@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { readLangFiles } from '../../lang-files';
-import { LangFile } from '../../lang-file-type';
+import { readLangFiles } from '../../common/lang-files';
+import { LangFile } from '../../common/lang-file-type';
 import { LogLevel, setLogLevel } from '../../tool/log';
 
 setLogLevel(LogLevel.None);

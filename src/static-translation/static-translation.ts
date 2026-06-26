@@ -1,10 +1,11 @@
 import path from "path";
-import { LangFile, LangTranslation, SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./lang-file-type";
-import { fastReadWrite } from "./tool/file";
+import { LangFile, LangTranslation } from "../common/lang-file-type";
+import { fastReadWrite } from "../tool/file";
 import { StrInterpolationTranslation } from "./str-interpolation-translation";
-import { readLangFiles } from "./lang-files";
-import { StaticTranslationParam } from "./translation-option";
-import { log, LogLevel } from "./tool/log";
+import { readLangFiles } from "../common/lang-files";
+import { StaticTranslationParam } from "../common/translation-option";
+import { log, LogLevel } from "../tool/log";
+import { SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./translation-data";
 
 
 /**

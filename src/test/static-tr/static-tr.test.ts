@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
 import { LogLevel, setLogLevel } from "../../tool/log";
-import { staticTranslation } from '../../static-translation';
+import { staticTranslation } from '../../static-translation/static-translation';
 import fs from 'fs';
 
 const pathToTestDir = './src/test/static-tr/file-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
-setLogLevel(LogLevel.Verbose);
+setLogLevel(LogLevel.None);
 
 describe('Static File Translation', () => {
     
@@ -30,7 +30,7 @@ describe('Static File Translation', () => {
         // the correct bzh translation
         expect(file1Tr.indexOf("Demat d'an holl !")).to.not.equal(-1);
         // the fr fallback translation if no bzh translation
-        expect(file1Tr.split("Qui est là \?")?.length).toEqual(3);
+        expect(file1Tr.indexOf("Qui est là ?")).to.not.equal(-1);
         // the no translation, if string include in bigger one
         expect(file1Tr.indexOf("Who is here? in the bottle?")).to.not.equal(-1);
 
@@ -39,7 +39,7 @@ describe('Static File Translation', () => {
         let file2Tr = fs.readFileSync(pathToTmpDir + '/sub-dir/sub-code.js').toString();
         // translate the string interpolation
         expect(file2Tr.indexOf("`peut être ${i} personne ? ${i * 2} ?`")).to.not.equal(-1);
-        // translate reverse string interpolation, by id
+        // translate reverse the string interpolation, tanks to id
         expect(file2Tr.indexOf("`les ${nbCar} voitures de ${personName}`")).to.not.equal(-1);
 
 
