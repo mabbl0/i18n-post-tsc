@@ -16,3 +16,7 @@ export interface StaticTranslationParam extends TranslationParam {
     /** fallback langage if outLang is not possible */
     fallbackLang: string[]
 }
+
+export interface DynamicTranslationParam extends TranslationParam {
+    dynamicLangFile: string
+}

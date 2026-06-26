@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import { LangFile, LangFileData } from './lang-file-type';
-import { fastRead } from './tool/file';
-import { log, LogLevel } from './tool/log';
+import { fastRead } from '../tool/file';
+import { log, LogLevel } from '../tool/log';
 
 const langFileExt = '.lang.json';
 const reExt = /\w+\.lang\.json$/g;

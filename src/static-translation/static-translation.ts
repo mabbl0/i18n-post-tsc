@@ -3,7 +3,7 @@ import { LangFile, LangTranslation } from "../common/lang-file-type";
 import { fastReadWrite } from "../tool/file";
 import { StrInterpolationTranslation } from "./str-interpolation-translation";
 import { readLangFiles } from "../common/lang-files";
-import { StaticTranslationParam } from "../common/translation-option";
+import { StaticTranslationParam } from "../common/translation-parameter";
 import { log, LogLevel } from "../tool/log";
 import { SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./translation-data";
 
@@ -15,8 +15,8 @@ import { SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./tr
 export function staticTranslation(staticTrParam: StaticTranslationParam) {
     log(LogLevel.Verbose, `Static Translation of the '${staticTrParam.srcDir}' source path`);
     readLangFiles(staticTrParam.srcDir, langFiles => {
-        let distAbsPath = path.resolve(staticTrParam.outDir);
         let staticLangFiles = prepareTranslationData(langFiles, staticTrParam);
+        let distAbsPath = path.resolve(staticTrParam.outDir);
 
         staticLangFiles.forEach(staticLangF => {
             translateFile(distAbsPath, staticLangF);
