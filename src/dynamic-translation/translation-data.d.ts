@@ -15,7 +15,7 @@ type PtscDynamicTrData = SimplePtscDynamicTrData | StrInterpolationPtscData
  */
 interface SimplePtscDynamicTrData {
     srcTr: RegExp
-    outPostTsc: string
+    idTr: string
 }
 
 /**

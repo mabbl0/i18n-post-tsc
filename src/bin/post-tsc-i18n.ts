@@ -3,6 +3,7 @@
 import yargs from 'yargs';
 import { staticTranslation } from '../static-translation/static-translation';
 import { setLogLevelByStr } from '../tool/log';
+import { postTscDynamicTranslation } from '../dynamic-translation/post-tsc-dynamic-tr';
 
 type PtiMode = 'static' | 'dynamic';
 
@@ -41,7 +42,11 @@ function main(): void {
             });
             break;
         case 'dynamic':
-            throw "no available yet";
+            postTscDynamicTranslation({
+                srcDir: 'src/test/dynamic-tr/',
+                outDir: 'src/test/dynamic-tr/',
+                dynamicLangFile: 'dynamicLangFile.lang.json'
+            })
             break;
         default:
             throw "mode unknow";

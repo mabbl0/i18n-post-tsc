@@ -167,7 +167,7 @@ function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
 
 /**
  * Recursive read and write to translate a file
- * try different path
+ * and try different path
  * @param distAbsPath the absolute path to the output directory
  * @param staticLangFile the static translation information for the file
  * @param pathToTest the path index to test
