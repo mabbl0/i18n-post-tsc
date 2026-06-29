@@ -136,7 +136,7 @@ function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation 
     else {
         return {
             srcTr: new RegExp("(\'|\"|\`)" + RegExp.escape(srcTr) + "(\'|\"|\`)", 'g'),
-            outTr: '\"' + outTr + '\"'
+            outTr: '\"' + outTr + '\"' // TODO: warning to code injection !!!
         }
     }
 }

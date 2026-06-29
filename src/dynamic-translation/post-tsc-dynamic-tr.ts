@@ -67,7 +67,7 @@ function processLangFilesData(langFiles: LangFile[], dynamicLangFiles: PtscDynam
         }
 
         // get a unique idTr base for the file
-        idTrBase = path.basename(dynamicLangF.fileName, '.js') + '_';
+        idTrBase = fileNameToIdTrBase(dynamicLangF.fileName);
         indexIdTr = idTrBaseList.findIndex(idTrB => idTrB.name == idTrBase);
         if (indexIdTr == -1) {
             idTrBaseList.push({ name: idTrBase, nb: 1 });
@@ -93,6 +93,15 @@ function processLangFilesData(langFiles: LangFile[], dynamicLangFiles: PtscDynam
 }
 
 /**
+ * Get base of id translation for a file
+ * @param fileName file name
+ * @returns the base of id translation for the file
+ */
+function fileNameToIdTrBase(fileName: string): string {
+    return path.basename(fileName, '.js').replaceAll('-', '_') + '_';
+}
+
+/**
  * add one translation to the data to save
  * @param trLangFile a translation from a lang file
  * @param idTr the id translation for this translation
@@ -110,6 +119,7 @@ function addOneTrToJson(trLangFile: LangTranslation, idTr: string, dynamicTransl
                 tr: {}
             });
         }
+        // TODO: warning to code injection !!!
         dynamicTranslationJson.data[langIndex].tr[idTr] = trLangFile[keyLang];
     });
 }

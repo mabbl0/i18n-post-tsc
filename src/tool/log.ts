@@ -6,41 +6,47 @@ export const enum LogLevel {
     Verbose,
     Debug,
 }
-type StrLogLevel = 'error' | 'debug' | 'warning' | 'verbose' | 'info';
-
+export type StrLogLevel = 'none' | 'error' | 'warning' | 'info' | 'verbose' | 'debug';
 var currentLogLevel: LogLevel = LogLevel.Info;
 
 /**
  * set the log level
  * @param logLevel the log level wanted
  */
-export function setLogLevel(logLevel: LogLevel) {
-    currentLogLevel = logLevel;
+export function setLogLevel(logLevel: LogLevel|undefined) {
+    if(logLevel!=undefined) {
+        currentLogLevel = logLevel;
+    }
 }
 
 /**
  * set the log level by the string log level
  * @param strLogLevel the log level wanted in string
  */
-export function setLogLevelByStr(strLogLevel: StrLogLevel) {
-    switch (strLogLevel) {
-        case 'error':
-            currentLogLevel = LogLevel.Error;
-            break;
-        case 'debug':
-            currentLogLevel = LogLevel.Debug;
-            break;
-        case 'warning':
-            currentLogLevel = LogLevel.Warning;
-            break;
-        case 'verbose':
-            currentLogLevel = LogLevel.Verbose;
-            break;
-        case 'info':
-            currentLogLevel = LogLevel.Info;
-            break;
-        default:
-            break;
+export function setLogLevelByStr(strLogLevel: StrLogLevel|undefined) {
+    if(strLogLevel!=undefined) {
+        switch (strLogLevel) {
+            case 'none':
+                currentLogLevel = LogLevel.None;
+                break;
+            case 'error':
+                currentLogLevel = LogLevel.Error;
+                break;
+            case 'warning':
+                currentLogLevel = LogLevel.Warning;
+                break;
+            case 'info':
+                currentLogLevel = LogLevel.Info;
+                break;
+            case 'verbose':
+                currentLogLevel = LogLevel.Verbose;
+                break;
+            case 'debug':
+                currentLogLevel = LogLevel.Debug;
+                break;
+            default:
+                break;
+        }
     }
 }
 
