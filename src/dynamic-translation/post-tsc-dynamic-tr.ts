@@ -116,11 +116,13 @@ function addOneTrToJson(trLangFile: LangTranslation, idTr: string, dynamicTransl
             langIndex = dynamicTranslationJson.data.length;
             dynamicTranslationJson.data.push({
                 lang: keyLang,
+                nbTr: 0,
                 tr: {}
             });
         }
         // TODO: warning to code injection !!!
         dynamicTranslationJson.data[langIndex].tr[idTr] = trLangFile[keyLang];
+        dynamicTranslationJson.data[langIndex].nbTr += 1;
     });
 }
 

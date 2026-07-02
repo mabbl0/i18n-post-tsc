@@ -32,12 +32,25 @@ interface StrInterpolationPtscData extends SimplePtscDynamicTrData {
  * Data for the dynamic translation
  */
 export interface DynamicTranslationData {
-    tr: LangTranslationsData
+    /**
+     * the base of the translation in function of the source lang and the fallback lang 
+     */
+    baseTranslation: LangTranslationsData
+    /**
+     * the number of the translation in the base translation
+     */
+    nbBaseTr: number
+
     /**
      * Map to the translation data
      * key is the lang ; the value is the tranlsation for this value
      */
     data: Map<String,LangTranslationsData>
+    /**
+     * the number of the tranlsation for each lang
+     * the lang is the key
+     */
+    dataNbTr: Map<String,number>
 }
 
 
@@ -64,7 +77,8 @@ export interface DynamicTranslationDataJson {
 }
 
 interface LangTranslationsDataJson {
-    lang: string,
+    lang: string
+    nbTr: number
     tr: TranslationsDataJson
 }
 
