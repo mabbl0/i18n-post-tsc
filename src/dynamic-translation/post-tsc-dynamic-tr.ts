@@ -7,8 +7,8 @@ import { LangFile, LangTranslation } from "../common/lang-file-type";
 import { DynamicTranslationDataJson, PtscDynamicLangFile, PtscDynamicTrData, SimplePtscDynamicTrData } from "./translation-data";
 import { fastReadWrite } from "../tool/file";
 
-const postTscModule = "post-tsc-i18n";
-const postTscModuleName = "post_tsc_i18n";
+const postTscModule = "dynamic-translation";
+const postTscModuleName = "dynamic_translation";
 const postTscTrAccess = ".translate.";
 const reModuleNameRequire = new RegExp("(?<=const)\\s*" + RegExp.escape(postTscModuleName) + "[A-Z_1-9]*(?=\\s*\\=\\s*require\\s*\\(\\s*\\\"" + RegExp.escape(postTscModule) + "\\\"\\s*\\))", 'g');
 const ptscRequire = `const ${postTscModuleName} = require("${postTscModule}");\n`;

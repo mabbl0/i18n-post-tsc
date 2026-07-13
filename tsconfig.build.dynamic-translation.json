@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  
+  "compilerOptions": {
+    "outDir": "./packages/dynamic-translation/dist"
+    
+  },
+  "files": ["src/dynamic-translation/dynamic-translation.ts"]
+}

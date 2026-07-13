@@ -12,15 +12,27 @@ var dynamicTranslationData: DynamicTranslationData = {
     data: new Map<string, LangTranslationsData>(),
     dataNbTr: new Map<string,number>()
 };
-var translate: LangTranslationsData = {};
+export var translate: LangTranslationsData = {};
 
 interface InitDynamicTrParameter {
+    /**
+     * Path to the dynamic langage file
+     */
     dynamicLangPath: string,
+    /**
+     * the start langage to beging the translation
+     */
     langStart: string,
+    /**
+     * the fallback langage if the first langage translation is not available 
+     */
     fallbackLang?: string[],
+    /**
+     * the log level
+     */
     logLevel?: StrLogLevel
 }
-function initDynamicTr(initParameter: InitDynamicTrParameter) {
+export function initDynamicTr(initParameter: InitDynamicTrParameter) {
     setLogLevelByStr(initParameter.logLevel);
 
     let dynamicTrJson = loadDynamicLangFile(initParameter.dynamicLangPath);
@@ -129,8 +141,10 @@ function trDataJsonToTrData(trDataJson: TranslationsDataJson): LangTranslationsD
 }
 
 
-
-
+/**
+ * Change the translated lang
+ * @param newLang the new lang to apply
+ */
 export function lang(newLang: string) {
     // find and apply the new lang
     let newTrData = dynamicTranslationData.data.get(newLang);

@@ -47,7 +47,12 @@ function prepareTranslationData(langFiles: LangFile[], staticTrParam: StaticTran
         }
 
         // initiate the list of the lang output wanted
-        outLangWanted = [staticTrParam.outLang].concat(staticTrParam.fallbackLang);
+        if(staticTrParam.fallbackLang != undefined) {
+            outLangWanted = [staticTrParam.outLang].concat(staticTrParam.fallbackLang);
+        }
+        else {
+            outLangWanted = [staticTrParam.outLang];
+        }
 
         // initiate the translation object for the file
         staticLangF = {
@@ -99,9 +104,11 @@ function checkFileOutLang(fileOutLang: string[] | undefined, staticTrParam: Stat
     if(fileOutLang.includes(staticTrParam.outLang)) {
         return true;
     }
-    for (let i = 0; i < staticTrParam.fallbackLang.length; i++) {
-        if(fileOutLang.includes(staticTrParam.fallbackLang[i])) {
-            return true;
+    if(staticTrParam.fallbackLang != undefined) {
+        for (let i = 0; i < staticTrParam.fallbackLang.length; i++) {
+            if(fileOutLang.includes(staticTrParam.fallbackLang[i])) {
+                return true;
+            }
         }
     }
     return false;

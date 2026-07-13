@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.build.dynamic-translation.json",
+    "compilerOptions": {
+      "removeComments": false,
+      "emitDeclarationOnly": true
+	},
+  "include": ["src/dynamic-translation/dynamic-translation.ts"]
+}

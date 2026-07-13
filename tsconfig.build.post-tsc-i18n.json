@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  
+  "compilerOptions": {
+    "outDir": "./packages/post-tsc-i18n/dist"
+    
+  },
+  "files": ["src/bin/post-tsc-i18n.ts"]
+}

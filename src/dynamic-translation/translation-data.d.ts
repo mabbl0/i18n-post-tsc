@@ -8,12 +8,12 @@ export interface PtscDynamicLangFile {
     data: PtscDynamicTrData[]
 }
 
-type PtscDynamicTrData = SimplePtscDynamicTrData | StrInterpolationPtscData
+export type PtscDynamicTrData = SimplePtscDynamicTrData | StrInterpolationPtscData
 
 /**
  * Simple post tsc Dynamic translation data for one files
  */
-interface SimplePtscDynamicTrData {
+export interface SimplePtscDynamicTrData {
     srcTr: RegExp
     idTr: string
 }
@@ -59,7 +59,7 @@ export interface DynamicTranslationData {
  * The translation data for one lang
  * the key is the idTr, the value is the translation
  */
-interface LangTranslationsData {
+export interface LangTranslationsData {
     [key: string]: string | DynamicStrInterpolation
 }
 
@@ -82,7 +82,7 @@ interface LangTranslationsDataJson {
     tr: TranslationsDataJson
 }
 
-interface TranslationsDataJson {
+export interface TranslationsDataJson {
     [key: string]: string | DynamicStrInterpolationJson
 }
 
