@@ -98,13 +98,13 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, langStart:
         // choose 'en' lang by default, if several choose
         trData = dynamicTranslationData.data.get('en');
         if(trData!=undefined) {
-            Object.assign(dynamicTranslationData.baseTranslation, trData);
+            Object.assign(dynamicTranslationData.baseTranslation, trData); // replace the property already in the object
         }
     }
     else if(langMaxTr.length != 0) {
         trData = dynamicTranslationData.data.get( langMaxTr[0] );
         if(trData!=undefined) {
-            Object.assign(dynamicTranslationData.baseTranslation, trData);
+            Object.assign(dynamicTranslationData.baseTranslation, trData); // replace the property already in the object
         }
     }
 
@@ -113,7 +113,7 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, langStart:
         for (let i = fallbackLang.length-1 ; i >= 0 ; i--) { // reverse process
             trData = dynamicTranslationData.data.get( fallbackLang[i] );
             if(trData!=undefined) {
-                Object.assign(dynamicTranslationData.baseTranslation, trData);
+                Object.assign(dynamicTranslationData.baseTranslation, trData); // replace the property already in the object
             } 
         }
     }
@@ -128,7 +128,8 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, langStart:
             }
         });
     });
-    log(LogLevel.Debug, 'base translation completed:', dynamicTranslationData.baseTranslation);
+    dynamicTranslationData.nbBaseTr = Object.keys(dynamicTranslationData.baseTranslation).length;
+    log(LogLevel.Debug, 'base translation completed with', dynamicTranslationData.nbBaseTr, 'translations:', dynamicTranslationData.baseTranslation);
 
 
     // change the lang to start lang
@@ -151,7 +152,7 @@ export function lang(newLang: string) {
     if(newTrData!=undefined) {
         let nbNewTr = dynamicTranslationData.dataNbTr.get(newLang);
         if(nbNewTr!=undefined && nbNewTr>=dynamicTranslationData.nbBaseTr) {
-            // new tr to apply is complete
+            // the new tr to apply is complete
             Object.assign(translate, newTrData); // replace the property already in the object
         }
         else {

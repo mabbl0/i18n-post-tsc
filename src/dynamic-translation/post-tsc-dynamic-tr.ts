@@ -10,7 +10,8 @@ import { fastReadWrite } from "../tool/file";
 const postTscModule = "dynamic-translation";
 const postTscModuleName = "dynamic_translation";
 const postTscTrAccess = ".translate.";
-const reModuleNameRequire = new RegExp("(?<=const)\\s*" + RegExp.escape(postTscModuleName) + "[A-Z_1-9]*(?=\\s*\\=\\s*require\\s*\\(\\s*\\\"" + RegExp.escape(postTscModule) + "\\\"\\s*\\))", 'g');
+// (?<=const)\s*dynamic_translation[a-zA-Z_1-9]*(?=\s*\=\s*require\s*\(\s*\"[a-zA-Z1-9\._\/-]*dynamic-translation\"\s*\))
+const reModuleNameRequire = new RegExp("(?<=const)\\s*" + RegExp.escape(postTscModuleName) + "[A-Z_1-9]*(?=\\s*\\=\\s*require\\s*\\(\\s*\\\"[a-zA-Z1-9\\._\\/-]*" + RegExp.escape(postTscModule) + "\\\"\\s*\\))", 'g');
 const ptscRequire = `const ${postTscModuleName} = require("${postTscModule}");\n`;
 
 /**

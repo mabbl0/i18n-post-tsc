@@ -1,0 +1,14 @@
+{
+    "srcLang": "en",
+    "translations": [
+        {
+            "en": "Hello everyone!",
+            "fr": "Bonjour tout le monde !",
+            "bzh": "Demat dan holl !"
+        },
+        {
+            "en": "Who is here?",
+            "fr": "Qui est là ?"
+        }
+    ]
+}
