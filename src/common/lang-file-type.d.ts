@@ -9,6 +9,9 @@ export interface LangFileData {
     translations: LangTranslation[]
 }
 
+export type LangFileContent = LangFileData | LangFileData[];
+
+
 /**
  * path and data from a lang file
  */

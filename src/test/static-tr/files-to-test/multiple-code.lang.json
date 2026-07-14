@@ -1,0 +1,22 @@
+[
+    {
+        "srcFile": "code-1",
+        "srcLang": "en",
+        "translations": [
+            {
+                "en": "Hello girls in blue?",
+                "fr": "Bonjour les filles en bleue ?"
+            }
+        ]
+    },
+    {
+        "srcFile": "./sub-dir/sub-code-1",
+        "srcLang": "en",
+        "translations": [
+            {
+                "en": "Hi you in red",
+                "fr": "Salut toi en rouge"
+            }
+        ]
+    }
+]

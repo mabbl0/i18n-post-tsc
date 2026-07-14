@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { LangFile, LangFileData } from './lang-file-type';
+import { LangFile, LangFileContent, LangFileData } from './lang-file-type';
 import { fastRead } from '../tool/file';
 import { log, LogLevel } from '../tool/log';
 
@@ -17,9 +17,9 @@ const reExt = /\w+\.lang\.json$/g;
  */
 interface ReadLangFileParam {
     srcAbsPath: string,
-    langFilesPath: string[], 
-    currentFileIndex: number, 
-    langFiles: LangFile[], 
+    langFilesPath: string[],
+    currentFileIndex: number,
+    langFiles: LangFile[],
     endCallback: (langFiles: LangFile[]) => void
 }
 
@@ -61,7 +61,7 @@ function readDataLangFile(readParam: ReadLangFileParam) {
     }
 
     fastRead(readParam.langFilesPath[readParam.currentFileIndex], (err, data, rParam) => {
-        if(rParam == undefined) {
+        if (rParam == undefined) {
             // shall not append
             log(LogLevel.Error, 'no parameter returned');
             return;
@@ -69,38 +69,57 @@ function readDataLangFile(readParam: ReadLangFileParam) {
         else if (err || data == undefined) {
             log(LogLevel.Error, err);
         }
-        else if(data.length != 0) {
-            // check the data
-            let jsonData = JSON.parse(data.toString()) as LangFileData;
-            if( checkLangFileData( jsonData, rParam.langFilesPath[rParam.currentFileIndex] ) ) {
-                rParam.langFiles.push({
-                    pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex] ).slice(0, -langFileExt.length) + '.js',
-                    data: jsonData
+        else if (data.length != 0) {
+            // check and add the data
+            let jsonData = JSON.parse(data.toString()) as LangFileContent;
+
+            if ((jsonData as LangFileData).srcLang == undefined && (jsonData as LangFileData[]).forEach != undefined) {
+                // this file content data for multiple files 
+                (jsonData as LangFileData[]).forEach((d) => {
+                    if (checkLangFileData(d, d.srcFile)) {
+                        rParam.langFiles.push({
+                            pathFromSrc: d.srcFile as string, //trust
+                            data: d
+                        });
+                        log(LogLevel.Verbose, `Read the data for the file: ${d.srcFile}`);
+                    }
                 });
-                log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
             }
+            else {
+                // data for only one file
+                if (checkLangFileData(jsonData as LangFileData, rParam.langFilesPath[rParam.currentFileIndex])) {
+                    rParam.langFiles.push({
+                        pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex]).slice(0, -langFileExt.length) + '.js',
+                        data: jsonData as LangFileData
+                    });
+                    log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
+                }
+            }
+
         }
-        
+
         // continue to read the next files
         readDataLangFile({
             srcAbsPath: rParam.srcAbsPath,
             langFilesPath: rParam.langFilesPath,
-            currentFileIndex: rParam.currentFileIndex +1,
+            currentFileIndex: rParam.currentFileIndex + 1,
             langFiles: rParam.langFiles,
             endCallback: rParam.endCallback
         });
     }, readParam);
 }
 
+
 /**
  * check the data read
  * @param data data to check
  * @returns if the data are correcte or not
  */
-function checkLangFileData(data: LangFileData, filePath: string): boolean {
-    if(data.srcLang == undefined ||
+function checkLangFileData(data: LangFileData, filePath: string | undefined): boolean {
+    if (data.srcLang == undefined ||
         data.translations == undefined ||
-        data.translations.length == 0
+        data.translations.length == 0 ||
+        filePath == undefined
     ) {
         log(LogLevel.Error, `the '${filePath}' lang file has not the require data`);
         return false;
@@ -108,12 +127,12 @@ function checkLangFileData(data: LangFileData, filePath: string): boolean {
 
     // check if every translation the source lang
     for (let i = 0; i < data.translations.length; i++) {
-        if(data.translations[i][data.srcLang] == undefined) {
+        if (data.translations[i][data.srcLang] == undefined) {
             log(LogLevel.Error, `the translation ${data.translations[i].toString()} from the '${filePath}' lang file don't containt the source langage`);
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -130,7 +149,7 @@ function getLangFiles(dirPath: string, langFilesPath: string[]) {
         }
         else if (isLangFile(content.name)) {
             log(LogLevel.Verbose, `find '${content.name}' file`);
-            langFilesPath.push( path.format({ dir: dirPath, base: content.name }) );
+            langFilesPath.push(path.format({ dir: dirPath, base: content.name }));
         }
     });
 }
@@ -142,6 +161,6 @@ function getLangFiles(dirPath: string, langFilesPath: string[]) {
  */
 function isLangFile(pathFile: string): boolean {
     return pathFile != undefined && pathFile.length != undefined &&
-        pathFile.search( reExt ) != -1;
+        pathFile.search(reExt) != -1;
 }
 

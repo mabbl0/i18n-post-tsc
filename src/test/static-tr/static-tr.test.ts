@@ -3,9 +3,9 @@ import { LogLevel, setLogLevel } from "../../tool/log";
 import { staticTranslation } from '../../static-translation/static-translation';
 import fs from 'fs';
 
-const pathToTestDir = './src/test/static-tr/file-to-test';
+const pathToTestDir = './src/test/static-tr/files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
-setLogLevel(LogLevel.None);
+setLogLevel(LogLevel.Verbose);
 
 describe('Static File Translation', () => {
     
@@ -41,6 +41,15 @@ describe('Static File Translation', () => {
         expect(file2Tr.indexOf("`peut être ${i} personne ? ${i * 2} ?`")).to.not.equal(-1);
         // translate reverse the string interpolation, tanks to id
         expect(file2Tr.indexOf("`les ${nbCar} voitures de ${personName}`")).to.not.equal(-1);
+
+        
+        /** Multiple simple translation from one file **/
+        let file3Tr = fs.readFileSync(pathToTmpDir + '/code-1.js').toString();
+        let file4Tr = fs.readFileSync(pathToTmpDir + '/sub-dir/sub-code-1.js').toString();
+        // the correct fallback translation
+        expect(file3Tr.indexOf("Bonjour les filles en bleue ?")).to.not.equal(-1);
+        // the correct fallback translation
+        expect(file4Tr.indexOf("Salut toi en rouge")).to.not.equal(-1);
 
 
         // delete the tempory directory
