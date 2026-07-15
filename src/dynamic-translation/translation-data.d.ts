@@ -1,3 +1,4 @@
+import { DynamicStrInterpolationTr } from "../common/dynamic-str-interpolation-tr"
 
 /**
  * path and data ready to prepare translation
@@ -8,7 +9,7 @@ export interface PtscDynamicLangFile {
     data: PtscDynamicTrData[]
 }
 
-export type PtscDynamicTrData = SimplePtscDynamicTrData | StrInterpolationPtscData
+export type PtscDynamicTrData = SimplePtscDynamicTrData | DynamicStrInterpolationTr
 
 /**
  * Simple post tsc Dynamic translation data for one files
@@ -16,13 +17,6 @@ export type PtscDynamicTrData = SimplePtscDynamicTrData | StrInterpolationPtscDa
 export interface SimplePtscDynamicTrData {
     srcTr: RegExp
     idTr: string
-}
-
-/**
- * string interpolation post tsc Dynamic translation data for one files
- */
-interface StrInterpolationPtscData extends SimplePtscDynamicTrData {
-    idStrInter: number[]
 }
 
 

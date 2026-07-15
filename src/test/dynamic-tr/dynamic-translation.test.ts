@@ -8,7 +8,7 @@ import fs from 'fs';
 const pathToTestDir = './src/test/dynamic-tr/files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
 const dynamicLangFile = "dynamicLangFile.lang.json";
-setLogLevel(LogLevel.Verbose);
+setLogLevel(LogLevel.None);
 
 describe('Dynamic File Translation', () => {
 
@@ -49,6 +49,7 @@ describe('Dynamic File Translation', () => {
         expect(indexBzh).to.toBeGreaterThan(indexEn);
         // the fr fallback translation
         expect(file1Log.indexOf("Qui est là ?")).to.not.equal(-1);
+
 
 
         // delete the tempory directory

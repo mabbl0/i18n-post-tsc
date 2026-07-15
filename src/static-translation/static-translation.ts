@@ -1,11 +1,11 @@
 import path from "path";
 import { LangFile, LangTranslation } from "../common/lang-file-type";
 import { fastReadWrite } from "../tool/file";
-import { StrInterpolationTranslation } from "./str-interpolation-translation";
 import { readLangFiles } from "../common/lang-files";
 import { StaticTranslationParam } from "../common/translation-parameter";
 import { log, LogLevel } from "../tool/log";
 import { SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./translation-data";
+import { StaticStrInterpolationTr } from "../common/static-str-interpolation-tr";
 
 
 /**
@@ -137,8 +137,8 @@ function chooseOutTr(tr: LangTranslation, outLangWanted: string[]): string | und
  * @returns the static translation
  */
 function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation {
-    if (StrInterpolationTranslation.isStrInterpolationTr(srcTr)) {
-        return new StrInterpolationTranslation(srcTr, outTr);
+    if (StaticStrInterpolationTr.isStrInterpolationTr(srcTr)) {
+        return new StaticStrInterpolationTr(srcTr, outTr);
     }
     else {
         return {
@@ -214,8 +214,8 @@ function processDataTranslate(dataReaded: string, staticLangFile: StaticLangFile
     log(LogLevel.Debug, 'start file translation');
     staticLangFile.tr.forEach(staticTr => {
         log(LogLevel.Debug, staticTr);
-        if ((staticTr as StrInterpolationTranslation).applyTranslation != undefined) {
-            dataReaded = (staticTr as StrInterpolationTranslation).applyTranslation(dataReaded);
+        if ((staticTr as StaticStrInterpolationTr).applyStaticTranslation != undefined) {
+            dataReaded = (staticTr as StaticStrInterpolationTr).applyStaticTranslation(dataReaded);
         }
         else {
             log(LogLevel.Debug, 'apply one simple static translation');

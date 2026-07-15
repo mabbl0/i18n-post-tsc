@@ -5,7 +5,7 @@ import fs from 'fs';
 
 const pathToTestDir = './src/test/static-tr/files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
-setLogLevel(LogLevel.Verbose);
+setLogLevel(LogLevel.None);
 
 describe('Static File Translation', () => {
     

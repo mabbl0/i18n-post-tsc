@@ -1,4 +1,4 @@
-import { StrInterpolationTranslation } from "./str-interpolation-translation";
+import { StaticStrInterpolationTr } from "../common/static-str-interpolation-tr";
 
 /**
  * path and data ready for static translation
@@ -9,7 +9,7 @@ export interface StaticLangFile {
     tr: StaticTranslation[]
 }
 
-type StaticTranslation = SimpleStaticTranslation | StrInterpolationTranslation;
+type StaticTranslation = SimpleStaticTranslation | StaticStrInterpolationTr;
 
 /**
  * Static translation for one files

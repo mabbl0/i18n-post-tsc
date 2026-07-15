@@ -6,10 +6,13 @@ import { log, LogLevel } from "../tool/log";
 import { LangFile, LangTranslation } from "../common/lang-file-type";
 import { DynamicTranslationDataJson, PtscDynamicLangFile, PtscDynamicTrData, SimplePtscDynamicTrData } from "./translation-data";
 import { fastReadWrite } from "../tool/file";
+import { DynamicStrInterpolationTr } from "../common/dynamic-str-interpolation-tr";
 
 const postTscModule = "dynamic-translation";
 const postTscModuleName = "dynamic_translation";
 const postTscTrAccess = ".translate.";
+const postTscStrInterTrAccess = ".translateStrInter(";
+
 // (?<=const)\s*dynamic_translation[a-zA-Z_1-9]*(?=\s*\=\s*require\s*\(\s*\"[a-zA-Z1-9\._\/-]*dynamic-translation\"\s*\))
 const reModuleNameRequire = new RegExp("(?<=const)\\s*" + RegExp.escape(postTscModuleName) + "[A-Z_1-9]*(?=\\s*\\=\\s*require\\s*\\(\\s*\\\"[a-zA-Z1-9\\._\\/-]*" + RegExp.escape(postTscModule) + "\\\"\\s*\\))", 'g');
 const ptscRequire = `const ${postTscModuleName} = require("${postTscModule}");\n`;
@@ -135,9 +138,16 @@ function addOneTrToJson(trLangFile: LangTranslation, idTr: string, dynamicTransl
  */
 function prepareOneTrForPtsc(srcTr: string, idTr: string): PtscDynamicTrData {
     // TODO: add str interpolation
-    return {
-        srcTr: new RegExp("(\'|\"|\`)" + RegExp.escape(srcTr) + "(\'|\"|\`)", 'g'),
-        idTr: idTr
+    if(DynamicStrInterpolationTr.isStrInterpolationTr(srcTr)) {
+        // a string interpolation tr
+        return new DynamicStrInterpolationTr(srcTr, idTr);
+    }
+    else {
+        // a simple tr
+        return {
+            srcTr: new RegExp("(\'|\"|\`)" + RegExp.escape(srcTr) + "(\'|\"|\`)", 'g'),
+            idTr: idTr
+        }
     }
 }
 
@@ -236,12 +246,19 @@ function processFileUpdate(dataReaded: string, dynamicLangFile: PtscDynamicLangF
     }
     log(LogLevel.Debug, "module name used: ", moduleNameUsed);
 
-    
+    let trAccessStr = moduleNameUsed + postTscTrAccess;
+    let trAccessStrForStrInter = moduleNameUsed + postTscStrInterTrAccess;
+    // find a replace the string by the access to the dynamic translation
     dynamicLangFile.data.forEach(dataTr => {
         log(LogLevel.Debug, dataTr);
-        
-        log(LogLevel.Debug, 'apply one simple update');
-        dataReaded = dataReaded.replaceAll((dataTr as SimplePtscDynamicTrData).srcTr, moduleNameUsed + postTscTrAccess + (dataTr as SimplePtscDynamicTrData).idTr);
+        if((dataTr as DynamicStrInterpolationTr).applySrcUpdate != undefined) {
+            log(LogLevel.Debug, 'apply one string interpolation update');
+            dataReaded = (dataTr as DynamicStrInterpolationTr).applySrcUpdate(dataReaded, trAccessStrForStrInter);
+        }
+        else {
+            log(LogLevel.Debug, 'apply one simple update');
+            dataReaded = dataReaded.replaceAll((dataTr as SimplePtscDynamicTrData).srcTr, trAccessStr + (dataTr as SimplePtscDynamicTrData).idTr);
+        }
     });
     return dataReaded;
 }
