@@ -1,4 +1,5 @@
-import { DynamicStrInterpolationTr } from "../common/dynamic-str-interpolation-tr"
+import { AccessDynamicStrInterTr } from "./access-dynamic-str-inter-tr"
+import { DynamicStrInterpolationTr } from "./dynamic-str-interpolation-tr"
 
 /**
  * path and data ready to prepare translation
@@ -54,11 +55,8 @@ export interface DynamicTranslationData {
  * the key is the idTr, the value is the translation
  */
 export interface LangTranslationsData {
-    [key: string]: string | DynamicStrInterpolation
+    [key: string]: string | AccessDynamicStrInterTr
 }
-
-// TODO: class
-interface DynamicStrInterpolation {}
 
 
 /*** DynamicTranslationData for save ***/
@@ -77,7 +75,10 @@ interface LangTranslationsDataJson {
 }
 
 export interface TranslationsDataJson {
-    [key: string]: string | DynamicStrInterpolationJson
+    [key: string]: string | AccessDynamicStrInterTrJson
 }
 
-interface DynamicStrInterpolationJson {}
+interface AccessDynamicStrInterTrJson {
+    splitTr: string[]
+    mapIdOrder: number[]
+}

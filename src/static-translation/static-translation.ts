@@ -5,7 +5,7 @@ import { readLangFiles } from "../common/lang-files";
 import { StaticTranslationParam } from "../common/translation-parameter";
 import { log, LogLevel } from "../tool/log";
 import { SimpleStaticTranslation, StaticLangFile, StaticTranslation } from "./translation-data";
-import { StaticStrInterpolationTr } from "../common/static-str-interpolation-tr";
+import { StaticStrInterpolationTr } from "./static-str-interpolation-tr";
 
 
 /**
@@ -76,7 +76,7 @@ function prepareTranslationData(langFiles: LangFile[], staticTrParam: StaticTran
             if(tr[langFiles[i].data.srcLang] != undefined) {
                 outTr = chooseOutTr(tr, outLangWanted);
                 if(outTr != undefined && outTr!=langFiles[i].data.srcLang) {
-                    staticLangF.tr.push( prepareOneTranslation(tr[langFiles[i].data.srcLang], outTr) );
+                    addOneTranslation(staticLangF.tr, tr[langFiles[i].data.srcLang], outTr);
                 }
             }
         });
@@ -131,20 +131,22 @@ function chooseOutTr(tr: LangTranslation, outLangWanted: string[]): string | und
 }
 
 /**
- * Prepare one translation
+ * add one translation to the static translation list
  * @param srcTr the source translation
  * @param outTr the output translation
- * @returns the static translation
  */
-function prepareOneTranslation(srcTr: string, outTr: string): StaticTranslation {
+function addOneTranslation(staticTrArr: StaticTranslation[], srcTr: string, outTr: string) {
     if (StaticStrInterpolationTr.isStrInterpolationTr(srcTr)) {
-        return new StaticStrInterpolationTr(srcTr, outTr);
+        let staticStrInter = new StaticStrInterpolationTr(srcTr, outTr);
+        if(staticStrInter.rdy) {
+            staticTrArr.push(staticStrInter);
+        }
     }
     else {
-        return {
+        staticTrArr.push({
             srcTr: new RegExp("(\'|\"|\`)" + RegExp.escape(srcTr) + "(\'|\"|\`)", 'g'),
             outTr: '\"' + outTr + '\"' // TODO: warning to code injection !!!
-        }
+        });
     }
 }
 

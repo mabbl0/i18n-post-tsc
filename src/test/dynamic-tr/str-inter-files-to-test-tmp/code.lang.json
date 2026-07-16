@@ -1,0 +1,13 @@
+{
+    "srcLang": "en",
+    "translations": [
+        {
+            "en": "may be ${} person? or ${}?",
+            "fr": "peut être ${} personne ? ou ${} ?"
+        },
+        {
+            "en": "${1}'s ${2} cars",
+            "fr": "les ${2} voitures de ${1}"
+        }
+    ]
+}

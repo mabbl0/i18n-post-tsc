@@ -1,17 +1,25 @@
 import { log, LogLevel, setLogLevelByStr, StrLogLevel } from "../tool/log";
-import { DynamicTranslationData, DynamicTranslationDataJson, LangTranslationsData, TranslationsDataJson } from "./translation-data";
+import { AccessDynamicStrInterTrJson, DynamicTranslationData, DynamicTranslationDataJson, LangTranslationsData, TranslationsDataJson } from "./translation-data";
 import fs from 'fs';
 import path from 'path';
+import { AccessDynamicStrInterTr } from "./access-dynamic-str-inter-tr";
 
 
 /** Initiat the global variable **/
 
+/**
+ * all data for the dynamic translation
+ */
 var dynamicTranslationData: DynamicTranslationData = {
     baseTranslation: {},
     nbBaseTr: 0,
     data: new Map<string, LangTranslationsData>(),
     dataNbTr: new Map<string,number>()
 };
+
+/**
+ * the object to access to the current translation
+ */
 export var translate: LangTranslationsData = {};
 
 interface InitDynamicTrParameter {
@@ -32,6 +40,11 @@ interface InitDynamicTrParameter {
      */
     logLevel?: StrLogLevel
 }
+
+/**
+ * Initiate the dynamic translation
+ * @param initParameter parameter for the dynamic translation
+ */
 export function initDynamicTr(initParameter: InitDynamicTrParameter) {
     setLogLevelByStr(initParameter.logLevel);
 
@@ -42,11 +55,17 @@ export function initDynamicTr(initParameter: InitDynamicTrParameter) {
         return;
     }
 
-    initDynamicTrData(dynamicTrJson, initParameter.langStart, initParameter.fallbackLang);
+    initDynamicTrData(dynamicTrJson, initParameter.fallbackLang);
+    // change the lang to start lang
+    lang(initParameter.langStart);
     log(LogLevel.Verbose, `Sucessfully initiate the dynamic translation data from '${initParameter.dynamicLangPath}' with the '${initParameter.langStart}' langage`);
 }
 
-
+/**
+ * Load he data from the dynamic lang file
+ * @param dynamicLangPath the path to the dynamic lang file
+ * @returns the content data readed, or undefined if fail
+ */
 function loadDynamicLangFile(dynamicLangPath: string): DynamicTranslationDataJson | undefined {
     const fileContent = fs.readFileSync( path.resolve(dynamicLangPath), 'utf-8');
     if(fileContent.length!=0) {
@@ -55,6 +74,11 @@ function loadDynamicLangFile(dynamicLangPath: string): DynamicTranslationDataJso
     return undefined;
 }
 
+/**
+ * Check the data json from the dynamic lang file
+ * @param dynamicTrJson the data json to check
+ * @returns indicate if the data is correct
+ */
 function checkDynamicTrData(dynamicTrJson: DynamicTranslationDataJson | undefined): boolean {
     if(dynamicTrJson!=undefined && 
         dynamicTrJson.data != undefined && 
@@ -71,15 +95,19 @@ function checkDynamicTrData(dynamicTrJson: DynamicTranslationDataJson | undefine
 }
 
 
-
-function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, langStart: string, fallbackLang: string[]|undefined) {
+/**
+ * Initiate the data for the dynamic translation
+ * @param dynamicTrJson the data for the dynamic translation file
+ * @param fallbackLang the fallback langage
+ */
+function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLang: string[]|undefined) {
     // Initiate data
     // find the lang with the more translation (may be the source lang)
     let maxNbTr = 0;
     let langMaxTr: string[] = [];
     dynamicTrJson.data.forEach( langTrDataJson => {
         // TODO: manage multiple init from different files
-        dynamicTranslationData.data.set(langTrDataJson.lang, trDataJsonToTrData(langTrDataJson.tr));
+        dynamicTranslationData.data.set(langTrDataJson.lang, parseJsonLangData(langTrDataJson.tr));
         dynamicTranslationData.dataNbTr.set(langTrDataJson.lang, langTrDataJson.nbTr);
 
         if(langTrDataJson.nbTr > maxNbTr) {
@@ -130,15 +158,26 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, langStart:
     });
     dynamicTranslationData.nbBaseTr = Object.keys(dynamicTranslationData.baseTranslation).length;
     log(LogLevel.Debug, 'base translation completed with', dynamicTranslationData.nbBaseTr, 'translations:', dynamicTranslationData.baseTranslation);
-
-
-    // change the lang to start lang
-    lang(langStart);
 }
 
-function trDataJsonToTrData(trDataJson: TranslationsDataJson): LangTranslationsData {
+/**
+ * Parse the json data for 1 lang from the dynamic lang file
+ * @param trDataJson the json data from the dynamic lang file
+ */
+function parseJsonLangData(trDataJson: TranslationsDataJson): LangTranslationsData {
     // TODO: complete with str interpolation object
-    return trDataJson;
+    const keysIdTr = Object.keys(trDataJson);
+    let langTrData: LangTranslationsData = {};
+    keysIdTr.forEach( (idTr) => {
+        if((trDataJson[idTr] as AccessDynamicStrInterTrJson).splitTr != undefined) {
+            langTrData[idTr] = new AccessDynamicStrInterTr( (trDataJson[idTr] as AccessDynamicStrInterTrJson).splitTr, (trDataJson[idTr] as AccessDynamicStrInterTrJson).mapIdOrder );
+        }
+        else {
+            langTrData[idTr] = trDataJson[idTr] as string;
+        }
+    });
+
+    return langTrData;
 }
 
 

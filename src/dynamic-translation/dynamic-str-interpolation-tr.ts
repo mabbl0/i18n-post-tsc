@@ -1,12 +1,12 @@
 import { log, LogLevel } from "../tool/log";
-import { reStrInter, StrInterpolationTr } from "./str-interpolation-tr";
+import { reStrInterContent, StrInterpolationTr } from "../common/str-interpolation-tr";
+import { strInterTrAccess } from "./post-tsc-dynamic-tr";
 
 /**
  * Prepare and process a dynamic translation
  * to a string interpolation `${}`
  */
 export class DynamicStrInterpolationTr extends StrInterpolationTr {
-    // protected outTrSplit: string[] // the output translation split between the ${}
     readonly idTr: string; // the id of this translation
     private trAccessStr: string; // the string to access to the translation object in run time
 
@@ -16,13 +16,11 @@ export class DynamicStrInterpolationTr extends StrInterpolationTr {
      * @param idTr the id of this translation
      */
     constructor(langFileSrcTr: string, idTr: string) {
-        super(langFileSrcTr, "");
+        super(langFileSrcTr);
         this.idTr = idTr;
         this.trAccessStr = "";
 
-        // // initiate the output translation split
-        // this.outTrSplit = langFileOutTr.split(reStrInter);
-
+        this.ready = true;
         log(LogLevel.Debug, 'new Dynamic Str Interpolation Translation created');
         log(LogLevel.Debug, this);
     }
@@ -36,7 +34,7 @@ export class DynamicStrInterpolationTr extends StrInterpolationTr {
      */
     applySrcUpdate(text: string, trAccessStr: string): string {
         log(LogLevel.Debug, 'apply one str interpolation Update for dynamic translation');
-        this.trAccessStr = trAccessStr + this.idTr + ',';
+        this.trAccessStr = trAccessStr + this.idTr + strInterTrAccess;
         return text.replaceAll(this.reSrcTr, this.updateOneStr.bind(this));
     }
 
@@ -46,13 +44,17 @@ export class DynamicStrInterpolationTr extends StrInterpolationTr {
      * @returns the string interpolation translated
      */
     private updateOneStr(strInterText: string): string {
-        let strInterContentMatch = strInterText.match(reStrInter);
+        let strInterContentMatch = strInterText.match(reStrInterContent);
         if (strInterContentMatch == null) {
             return strInterText;
         }
 
         // the call to translation with the content in the source file
-        return strInterContentMatch.reduce( ((r,c) => r + ',' + c), this.trAccessStr ) + ')';
+        let updatedStr = this.trAccessStr;
+        for (let i = 0; i < strInterContentMatch.length-1; i++) {
+            updatedStr += strInterContentMatch[i] + ',';
+        }
+        updatedStr += strInterContentMatch[ strInterContentMatch.length-1 ] + ')';
+        return updatedStr;
     }
-
 }

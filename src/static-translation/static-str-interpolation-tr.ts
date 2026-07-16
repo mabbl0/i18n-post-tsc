@@ -1,27 +1,41 @@
 import { log, LogLevel } from "../tool/log";
-import { reStrInter, StrInterpolationTr } from "./str-interpolation-tr";
+import { reStrInter, StrInterpolationTr } from "../common/str-interpolation-tr";
 
 /**
  * Prepare and process a static translation
  * to a string interpolation `${}`
  */
 export class StaticStrInterpolationTr extends StrInterpolationTr {
-    protected outTrSplit: string[] // the output translation split between the ${}
+    readonly outTrSplit: string[] // the output translation split between the ${}
     
+    // map to link the id in the ${} with the output ${} order 
+    readonly mapIdOutTrOrder: Map<string, number>
+
     /**
      * Prepare and process to a translation to a string interpolation `${}`
      * @param langFileSrcTr the source translation from the langage file
      * @param langFileOutTr the output translation from the langage file
      */
     constructor(langFileSrcTr: string, langFileOutTr: string) {
-        super(langFileSrcTr, langFileOutTr);
+        super(langFileSrcTr);
 
+        // map the id between the source and the output tr
+        let mapIdOrder = this.mapIdOrder(langFileOutTr);
+        if(mapIdOrder==undefined) {
+            this.outTrSplit = [];
+            this.mapIdOutTrOrder = new Map<string, number>()
+            return;
+        }
+        this.mapIdOutTrOrder = mapIdOrder;
+        
         // initiate the output translation split
         this.outTrSplit = '`'.concat(langFileOutTr, '`').split(reStrInter);
 
+        this.ready = true;
         log(LogLevel.Debug, 'new Static Str Interpolation Translation created');
         log(LogLevel.Debug, this);
     }
+
 
     /**
      * apply the translation to a text
@@ -32,6 +46,7 @@ export class StaticStrInterpolationTr extends StrInterpolationTr {
         log(LogLevel.Debug, 'apply one str interpolation Translation');
         return text.replaceAll(this.reSrcTr, this.translateOneStr.bind(this));
     }
+
 
     /**
      * Translate one string for the static trnaslation
