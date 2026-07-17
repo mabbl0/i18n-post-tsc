@@ -145,7 +145,7 @@ function addOneTranslation(staticTrArr: StaticTranslation[], srcTr: string, outT
     else {
         staticTrArr.push({
             srcTr: new RegExp("(\'|\"|\`)" + RegExp.escape(srcTr) + "(\'|\"|\`)", 'gm'),
-            outTr: '\"' + outTr + '\"' // TODO: warning to code injection !!!
+            outTr: '\"' + outTr + '\"'
         });
     }
 }

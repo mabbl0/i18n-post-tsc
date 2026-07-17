@@ -106,7 +106,19 @@ function processLangFilesData(langFiles: LangFile[], dynamicLangFiles: PtscDynam
  * @returns the base of id translation for the file
  */
 function fileNameToIdTrBase(fileName: string): string {
-    return path.basename(fileName, '.js').replaceAll('-', '_') + '_';
+    // TODO: num at the file name begging
+    /**
+     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#variables
+     * no space
+     * 
+  // 2. Split on any non-alphanumeric character (-, _, ., space, etc.)
+  const parts = base.split(/[^a-zA-Z0-9]+/).filter(Boolean);
+  
+    if (/^[0-9]/.test(name)) {
+    name = '_' + name;
+  }
+     */
+    return path.basename(fileName, '.js').replaceAll(/(-|\.)/g, '_') + '_';
 }
 
 /**
@@ -130,7 +142,6 @@ function addOneTrToJson(trLangFile: LangTranslation, ptscDynTrData: PtscDynamicT
                 tr: {}
             });
         }
-        // TODO: warning to code injection !!!
 
         if((ptscDynTrData as DynamicStrInterpolationTr).mapNumIdOrder != undefined) {
             // is a string interpolation tr
