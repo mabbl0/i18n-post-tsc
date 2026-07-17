@@ -23,7 +23,7 @@ const ptscRequire = `const ${postTscModuleName} = require("${postTscModule}");\n
  * @param dynamicParameter parameter to prepare the translation data for dynamic translation
  */
 export function postTscDynamicTranslation(dynamicParameter: DynamicTranslationParam) {
-    log(LogLevel.Verbose, `Post tsc Translation of the '${dynamicParameter.srcDir}' source path`);
+    log(LogLevel.Verbose, `Dynamic Translation Post tsc for the '${dynamicParameter.srcDir}' source path`);
     readLangFiles(dynamicParameter.srcDir, langFiles => {
         let dynamicLangFiles: PtscDynamicLangFile[] = [];
         let dynamicTranslationJson: DynamicTranslationDataJson = {

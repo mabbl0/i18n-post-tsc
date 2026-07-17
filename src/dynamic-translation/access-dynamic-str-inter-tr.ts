@@ -1,8 +1,11 @@
 
 export class AccessDynamicStrInterTr {
+    /** @internal */
     readonly splitTr: string[] // the translation split between the ${}
+    /** @internal */
     readonly mapIdOrder: number[]
 
+    /** @internal */
     constructor(splitTr: string[], mapIdOrder: number[]) {
         this.splitTr = splitTr;
         this.mapIdOrder = mapIdOrder;

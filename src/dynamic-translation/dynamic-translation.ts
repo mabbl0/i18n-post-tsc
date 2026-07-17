@@ -47,6 +47,7 @@ interface InitDynamicTrParameter {
  */
 export function initDynamicTr(initParameter: InitDynamicTrParameter) {
     setLogLevelByStr(initParameter.logLevel);
+    log(LogLevel.Info, `Initiate the dynamic translation data from '${initParameter.dynamicLangPath}'`);
 
     let dynamicTrJson = loadDynamicLangFile(initParameter.dynamicLangPath);
     log(LogLevel.Debug, 'dynamic data loaded:', dynamicTrJson);
@@ -58,7 +59,7 @@ export function initDynamicTr(initParameter: InitDynamicTrParameter) {
     initDynamicTrData(dynamicTrJson, initParameter.fallbackLang);
     // change the lang to start lang
     lang(initParameter.langStart);
-    log(LogLevel.Verbose, `Sucessfully initiate the dynamic translation data from '${initParameter.dynamicLangPath}' with the '${initParameter.langStart}' langage`);
+    log(LogLevel.Verbose, 'Sucessfully initiate the dynamic translation data');
 }
 
 /**
@@ -109,6 +110,8 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLa
         // TODO: manage multiple init from different files
         dynamicTranslationData.data.set(langTrDataJson.lang, parseJsonLangData(langTrDataJson.tr));
         dynamicTranslationData.dataNbTr.set(langTrDataJson.lang, langTrDataJson.nbTr);
+        
+        log(LogLevel.Debug, 'langage', langTrDataJson.lang, 'added with', langTrDataJson.nbTr, 'translations');
 
         if(langTrDataJson.nbTr > maxNbTr) {
             maxNbTr = langTrDataJson.nbTr;
@@ -199,11 +202,11 @@ export function lang(newLang: string) {
             // then apply the translation choosen
             Object.assign(translate, newTrData); // replace the property already in the object
         }
-        log(LogLevel.Verbose, `Change lang translation to '${newLang}'`);
+        log(LogLevel.Info, `Change langage translation to '${newLang}'`);
         log(LogLevel.Debug, 'new translate:', translate);
     }
     else {
-        log(LogLevel.Error, `the lang '${newLang}' is not available for the dynamic translation`);
+        log(LogLevel.Error, `the langage '${newLang}' is not available with the dynamic translation data`);
     }
 }
 
