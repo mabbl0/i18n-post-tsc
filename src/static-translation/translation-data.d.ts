@@ -1,4 +1,4 @@
-import { StaticStrInterpolationTr } from "../common/static-str-interpolation-tr";
+import { StaticStrInterpolationTr } from "./static-str-interpolation-tr";
 
 /**
  * path and data ready for static translation

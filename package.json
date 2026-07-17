@@ -44,6 +44,6 @@
     "build:post": "tsc -p tsconfig.build.post-tsc-i18n.json",
     "build:dyn": "tsc -p tsconfig.build.dynamic-translation.json && npm run build:dyn:dts",
     "build:dyn:dts": "dts-bundle-generator --project tsconfig.dts.dynamic-translation.json --export-referenced-types false --out-file ./packages/dynamic-translation/dist/index.d.ts src/dynamic-translation/index.ts",
-    "test": "vitest"
+    "test": "vitest run"
   }
 }

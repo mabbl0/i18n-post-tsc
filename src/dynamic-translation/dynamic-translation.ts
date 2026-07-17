@@ -165,7 +165,6 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLa
  * @param trDataJson the json data from the dynamic lang file
  */
 function parseJsonLangData(trDataJson: TranslationsDataJson): LangTranslationsData {
-    // TODO: complete with str interpolation object
     const keysIdTr = Object.keys(trDataJson);
     let langTrData: LangTranslationsData = {};
     keysIdTr.forEach( (idTr) => {

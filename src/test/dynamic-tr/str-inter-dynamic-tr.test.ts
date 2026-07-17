@@ -2,13 +2,13 @@ import { describe, expect, test } from "vitest";
 import { LogLevel, setLogLevel } from "../../tool/log";
 import { postTscDynamicTranslation } from '../../dynamic-translation/post-tsc-dynamic-tr';
 
-// const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 import fs from 'fs';
 
 const pathToTestDir = './src/test/dynamic-tr/str-inter-files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
 const dynamicLangFile = "dynamicLangFile.lang.json";
-setLogLevel(LogLevel.Debug);
+setLogLevel(LogLevel.None);
 
 describe('Dynamic File Translation', () => {
 
@@ -27,20 +27,33 @@ describe('Dynamic File Translation', () => {
         await new Promise(resolve => setTimeout(resolve, 100));
 
         /** Check the dynamic lang file after the postTscDynamicTranslation **/
-        // let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();
-        // expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"code_0":"Hello everyone!","code_1":"Who is here?"}},{"lang":"fr","nbTr":2,"tr":{"code_0":"Bonjour tout le monde !","code_1":"Qui est là ?"}},{"lang":"bzh","nbTr":1,"tr":{"code_0":"Demat dan holl !"}}]}`);
+        let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();
+        expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"code_0":{"splitTr":["may be "," person? or ","?"],"mapIdOrder":[]},"code_1":{"splitTr":["","'s "," cars"],"mapIdOrder":[0,1]}}},{"lang":"fr","nbTr":2,"tr":{"code_0":{"splitTr":["peut être "," personne ? ou "," ?"],"mapIdOrder":[]},"code_1":{"splitTr":["les "," voitures de ",""],"mapIdOrder":[1,0]}}}]}`);
 
 
         /** Execute the translate js file, to check the console log translation **/
-        // execSync(`node ${pathToTmpDir + '/code.js'} > ${pathToTmpDir + '/code.log'}`);
+        execSync(`node ${pathToTmpDir + '/code.js'} > ${pathToTmpDir + '/code.log'}`);
 
         
-        // TODO: add string interpolation test
-        expect(1).equal(1); // ??
-
-
+        /** The string interpolation dynamic translation **/
+        let fileLog = fs.readFileSync(pathToTmpDir + '/code.log').toString();
+        // expect the fr translation with 0 and 0
+        let indexFr = fileLog.indexOf("peut être 0 personne ? ou 0 ?");
+        expect(indexFr).to.not.equal(-1);
+        // then the en translation with 1 and 2
+        let indexEn = fileLog.indexOf("may be 1 person? or 2?");
+        expect(indexEn).to.not.equal(-1);
+        expect(indexEn).to.toBeGreaterThan(indexFr);
+        // expect the en translation
+        let indexEn2 = fileLog.indexOf("Jean's 3 cars");
+        expect(indexEn2).to.not.equal(-1);
+        expect(indexEn2).to.toBeGreaterThan(indexEn);
+        // then the fr translation, with the reverse order
+        let indexFr2 = fileLog.indexOf("les 3 voitures de Jean");
+        expect(indexFr2).to.not.equal(-1);
+        expect(indexFr2).to.toBeGreaterThan(indexEn2);
 
         // delete the tempory directory
-        // fs.rmSync(pathToTmpDir, { force: true, recursive: true });
+        fs.rmSync(pathToTmpDir, { force: true, recursive: true });
     });
 });
