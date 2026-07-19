@@ -3,7 +3,7 @@
 import yargs from 'yargs';
 import { staticTranslation } from '../static-translation/static-translation';
 import { LogLevel, setLogLevel, setLogLevelByStr, StrLogLevel } from '../tool/log';
-import { postTscDynamicTranslation } from '../dynamic-translation/post-tsc-dynamic-tr';
+import { dynamicTranslationPostTsc } from '../dynamic-translation/dynamic-tr-post-tsc';
 
 // TODO: add a config file with the arg option
 
@@ -21,6 +21,7 @@ interface ParsedArgs extends yargs.Arguments {
     fallbackLang: string[]
 
     dynamicLangFile: string
+    idModuleName: string
 }
 
 function parseArgs(): ParsedArgs {
@@ -40,6 +41,7 @@ function parseArgs(): ParsedArgs {
             description: "the log level for the execution"
         })
 
+        // common parameter
         .option('mode', {
             alias: "m",
             demandOption: true,
@@ -60,6 +62,7 @@ function parseArgs(): ParsedArgs {
             description: "the output directory"
         })
 
+        // static mode parameter
         .option('outLang', {
             alias: "l",
             type: 'string',
@@ -71,10 +74,14 @@ function parseArgs(): ParsedArgs {
             description: "the fallback langage for the static translation"
         })
 
-        
+        // dynamic mode parameter
         .option('dynamicLangFile', {
             type: 'string',
-            description: "path to the langage file for the dynamic translation"
+            description: "path to the langage file data for the dynamic translation"
+        })
+        .option('idModuleName', {
+            type: 'string',
+            description: "identifer name form the module to add to every identifer in dynamic translation"
         })
         .version()
         .strict()
@@ -112,10 +119,11 @@ function main(): void {
                 throw "Dynamic mode require the options: srcDir ; outDir ; dynamicLangFile";
             }
 
-            postTscDynamicTranslation({
+            dynamicTranslationPostTsc({
                 srcDir: args.srcDir,
                 outDir: args.outDir,
-                dynamicLangFile: args.dynamicLangFile
+                dynamicLangFile: args.dynamicLangFile,
+                idModuleName: args.idModuleName
             })
             break;
         default:

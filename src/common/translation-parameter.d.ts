@@ -1,5 +1,5 @@
 
-/** the parameter to a translation */
+/** the parameter for a translation */
 export interface TranslationParam {
     /** path to the source directory */
     srcDir: string
@@ -8,7 +8,7 @@ export interface TranslationParam {
 }
 
 /**
- * The parameter to the static translation
+ * The parameter for the static translation
  */
 export interface StaticTranslationParam extends TranslationParam {
     /** output langage result after translation */
@@ -17,6 +17,10 @@ export interface StaticTranslationParam extends TranslationParam {
     fallbackLang?: string[]
 }
 
+/**
+ * The parameter for the dynamic translation
+ */
 export interface DynamicTranslationParam extends TranslationParam {
     dynamicLangFile: string
+    idModuleName?: string
 }

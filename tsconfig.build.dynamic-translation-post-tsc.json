@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   
   "compilerOptions": {
-    "outDir": "./packages/dynamic-translation/dist"
+    "outDir": "./packages/dynamic-translation-post-tsc/dist"
     
   },
   "files": ["src/dynamic-translation/dynamic-translation.ts"]

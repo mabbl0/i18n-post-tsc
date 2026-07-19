@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { LogLevel, setLogLevel } from "../../tool/log";
-import { postTscDynamicTranslation } from '../../dynamic-translation/post-tsc-dynamic-tr';
+import { dynamicTranslationPostTsc } from '../../dynamic-translation/dynamic-tr-post-tsc';
 
 import { execSync } from 'child_process';
 import fs from 'fs';
@@ -17,7 +17,7 @@ describe('Dynamic File Translation', () => {
         fs.cpSync(pathToTestDir, pathToTmpDir,
             { force: true, recursive: true });
 
-        postTscDynamicTranslation({
+        dynamicTranslationPostTsc({
             srcDir: pathToTmpDir,
             outDir: pathToTmpDir,
             dynamicLangFile: dynamicLangFile
@@ -26,7 +26,7 @@ describe('Dynamic File Translation', () => {
         // wait 100ms for the translation finish
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        /** Check the dynamic lang file after the postTscDynamicTranslation **/
+        /** Check the dynamic lang file after the dynamicTranslationPostTsc **/
         let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();
         expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"code_0":{"splitTr":["may be "," person? or ","?"],"mapIdOrder":[]},"code_1":{"splitTr":["","'s "," cars"],"mapIdOrder":[0,1]}}},{"lang":"fr","nbTr":2,"tr":{"code_0":{"splitTr":["peut être "," personne ? ou "," ?"],"mapIdOrder":[]},"code_1":{"splitTr":["les "," voitures de ",""],"mapIdOrder":[1,0]}}}]}`);
 

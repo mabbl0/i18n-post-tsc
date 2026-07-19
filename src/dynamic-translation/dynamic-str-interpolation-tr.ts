@@ -1,6 +1,6 @@
 import { log, LogLevel } from "../tool/log";
 import { reStrInterContent, StrInterpolationTr } from "../common/str-interpolation-tr";
-import { strInterTrAccess } from "./post-tsc-dynamic-tr";
+import { strInterTrAccess } from "./dynamic-tr-post-tsc";
 
 /**
  * Prepare and process a dynamic translation

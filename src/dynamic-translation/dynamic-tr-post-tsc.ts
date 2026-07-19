@@ -12,7 +12,7 @@ import { reStrInter } from "../common/str-interpolation-tr";
 const postTscModule = "dynamic-translation";
 const postTscModuleName = "dynamic_translation";
 const postTscTrAccess = ".translate.";
-export const strInterTrAccess = ".with("; // AccessDynamicStrInterTr.with
+export const strInterTrAccess = "?.with("; // AccessDynamicStrInterTr.with
 
 // (?<=const)\s*dynamic_translation[a-zA-Z_1-9]*(?=\s*\=\s*require\s*\(\s*\"[a-zA-Z1-9\._\/-]*dynamic-translation\"\s*\))
 const reModuleNameRequire = new RegExp("(?<=const)\\s*" + RegExp.escape(postTscModuleName) + "[A-Z_1-9]*(?=\\s*\\=\\s*require\\s*\\(\\s*\\\"[a-zA-Z1-9\\._\\/-]*" + RegExp.escape(postTscModule) + "\\\"\\s*\\))", 'g');
@@ -22,14 +22,16 @@ const ptscRequire = `const ${postTscModuleName} = require("${postTscModule}");\n
  * Read the lang files and prepare the data for a dynamic translation
  * @param dynamicParameter parameter to prepare the translation data for dynamic translation
  */
-export function postTscDynamicTranslation(dynamicParameter: DynamicTranslationParam) {
+export function dynamicTranslationPostTsc(dynamicParameter: DynamicTranslationParam) {
     log(LogLevel.Verbose, `Dynamic Translation Post tsc for the '${dynamicParameter.srcDir}' source path`);
+    
+    let idModuleName = idModuleNameToIdentifer(dynamicParameter.idModuleName);
     readLangFiles(dynamicParameter.srcDir, langFiles => {
         let dynamicLangFiles: PtscDynamicLangFile[] = [];
         let dynamicTranslationJson: DynamicTranslationDataJson = {
             data: []
         }
-        processLangFilesData(langFiles, dynamicLangFiles, dynamicTranslationJson);
+        processLangFilesData(langFiles, idModuleName, dynamicLangFiles, dynamicTranslationJson);
 
         let distAbsPath = path.resolve(dynamicParameter.outDir);
         saveDynamicTranslationData(distAbsPath, dynamicParameter.dynamicLangFile, dynamicTranslationJson);
@@ -47,7 +49,7 @@ export function postTscDynamicTranslation(dynamicParameter: DynamicTranslationPa
  * @param dynamicLangFiles the lang file data for the post tsc dynamic translation
  * @param dynamicTranslationJson the dynamic translation data to save
  */
-function processLangFilesData(langFiles: LangFile[], dynamicLangFiles: PtscDynamicLangFile[], dynamicTranslationJson: DynamicTranslationDataJson) {
+function processLangFilesData(langFiles: LangFile[], idModuleName: string, dynamicLangFiles: PtscDynamicLangFile[], dynamicTranslationJson: DynamicTranslationDataJson) {
     let dynamicLangF: PtscDynamicLangFile;
     let idTrBaseList: { name: string, nb: number }[] = [];
     let indexIdTr: number;
@@ -73,7 +75,7 @@ function processLangFilesData(langFiles: LangFile[], dynamicLangFiles: PtscDynam
         }
 
         // get a unique idTr base for the file
-        idTrBase = fileNameToIdTrBase(dynamicLangF.fileName);
+        idTrBase = fileNameToIdTrBase(idModuleName, dynamicLangF.fileName);
         indexIdTr = idTrBaseList.findIndex(idTrB => idTrB.name == idTrBase);
         if (indexIdTr == -1) {
             idTrBaseList.push({ name: idTrBase, nb: 1 });
@@ -101,24 +103,37 @@ function processLangFilesData(langFiles: LangFile[], dynamicLangFiles: PtscDynam
 }
 
 /**
- * Get base of id translation for a file
+ * Get base of id translation for a file name
+ * @param idModuleName the module name id 
  * @param fileName file name
  * @returns the base of id translation for the file
  */
-function fileNameToIdTrBase(fileName: string): string {
-    // TODO: num at the file name begging
-    /**
-     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#variables
-     * no space
-     * 
-  // 2. Split on any non-alphanumeric character (-, _, ., space, etc.)
-  const parts = base.split(/[^a-zA-Z0-9]+/).filter(Boolean);
-  
-    if (/^[0-9]/.test(name)) {
-    name = '_' + name;
-  }
-     */
-    return path.basename(fileName, '.js').replaceAll(/(-|\.)/g, '_') + '_';
+function fileNameToIdTrBase(idModuleName: string, fileName: string): string {
+    return idModuleName + stringToIdentifer( path.basename(fileName, '.js') );   // remove extension
+}
+
+/**
+ * Get the identifer name from the id module name
+ * @param idModuleName the module name id 
+ * @returns the identifer for the id module name
+ */
+function idModuleNameToIdentifer(idModuleName: string|undefined): string {
+    if(idModuleName!=undefined) {
+        log(LogLevel.Verbose, `Module name '${idModuleName}' added to the identifers name`);
+        return stringToIdentifer(idModuleName);
+    }
+    return '';
+}
+
+/**
+ * Get an identifer name from a string
+ * @param str the string to change
+ * @returns the identifer from the string
+ */
+function stringToIdentifer(str: string): string {
+    return str.replaceAll(/[^a-zA-Z0-9]+/g, '')   // remove all alphanumeric char
+        .replace(/^(?=[0-9])/g, '_')        // add '_' if start with a number
+         + '_';                             // add '_' at the end for the next step
 }
 
 /**

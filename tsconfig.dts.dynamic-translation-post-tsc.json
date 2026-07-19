@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.build.dynamic-translation.json",
+  "extends": "./tsconfig.build.dynamic-translation-post-tsc.json",
     "compilerOptions": {
       "removeComments": false,
       "emitDeclarationOnly": true

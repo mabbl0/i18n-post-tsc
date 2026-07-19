@@ -1,5 +1,5 @@
 "use strict";
-const dynamic_translation_1 = require("../../../../packages/dynamic-translation/dist/dynamic-translation/dynamic-translation");
+const dynamic_translation_1 = require("../../../../packages/dynamic-translation-post-tsc/dist/dynamic-translation/dynamic-translation");
 
 dynamic_translation_1.initDynamicTr({
     dynamicLangPath: './src/test/dynamic-tr/files-to-test-tmp/dynamicLangFile.lang.json',

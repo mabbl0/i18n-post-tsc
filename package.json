@@ -1,7 +1,7 @@
 {
-  "name": "post-tsc-i18n",
+  "name": "i18n-post-tsc",
   "version": "0.1.0",
-  "description": "Inject your translations into your compiled JS, so you write your TS as if i18n never existed",
+  "description": "Inject your translations directly into your compiled JS, so you write your TS as if i18n never existed",
   "keywords": [
     "ts",
     "tsc",
@@ -34,16 +34,16 @@
     "node": ">=25.8.1"
   },
   "files": [
-    "./packages/post-tsc-i18n/dist"
+    "./packages/i18n-post-tsc/dist"
   ],
-  "types": "./packages/post-tsc-i18n/dist/index.d.ts",
-  "main": "./packages/post-tsc-i18n/dist/index.js",
-  "bin": "./packages/post-tsc-i18n/dist/bin/post-tsc-i18n.js",
+  "types": "./packages/i18n-post-tsc/dist/index.d.ts",
+  "main": "./packages/i18n-post-tsc/dist/index.js",
+  "bin": "./packages/i18n-post-tsc/dist/bin/i18n-post-tsc.js",
   "scripts": {
     "build": "npm run build:post && npm run build:dyn",
-    "build:post": "tsc -p tsconfig.build.post-tsc-i18n.json",
-    "build:dyn": "tsc -p tsconfig.build.dynamic-translation.json && npm run build:dyn:dts",
-    "build:dyn:dts": "dts-bundle-generator --project tsconfig.dts.dynamic-translation.json --export-referenced-types false --out-file ./packages/dynamic-translation/dist/index.d.ts src/dynamic-translation/index.ts",
+    "build:post": "tsc -p tsconfig.build.i18n-post-tsc.json",
+    "build:dyn": "tsc -p tsconfig.build.dynamic-translation-post-tsc.json && npm run build:dyn:dts",
+    "build:dyn:dts": "dts-bundle-generator --project tsconfig.dts.dynamic-translation-post-tsc.json --export-referenced-types false --out-file ./packages/dynamic-translation-post-tsc/dist/index.d.ts src/dynamic-translation/index-dynamic-translation.ts",
     "test": "vitest run"
   }
 }
