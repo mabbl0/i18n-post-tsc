@@ -8,7 +8,7 @@ import fs from 'fs';
 const pathToTestDir = './src/test/dynamic-tr/files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
 const dynamicLangFile = "dynamicLangFile.lang.json";
-setLogLevel(LogLevel.None);
+setLogLevel(LogLevel.Info);
 
 describe('Dynamic File Translation', () => {
 
@@ -24,7 +24,7 @@ describe('Dynamic File Translation', () => {
         });
 
         // wait 100ms for the translation finish
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         /** Check the dynamic lang file after the dynamicTranslationPostTsc **/
         let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();

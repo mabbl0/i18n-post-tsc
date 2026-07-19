@@ -41,7 +41,7 @@ describe('Dynamic File Translation with multiple module using dynamic translatio
         });
 
         // wait 100ms for the translation finish
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         /** Execute the translate js file, to check the console log translation **/
         execSync(`node ${pathToModule2 + '/code.js'} > ${pathToTmpDir + '/code.log'}`);
