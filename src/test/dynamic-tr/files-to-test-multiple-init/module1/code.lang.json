@@ -1,0 +1,9 @@
+{
+    "srcLang": "en",
+    "translations": [
+        {
+            "en": "Hi from the '${}' module!!",
+            "fr": "Salut depuis le module '${}' !!"
+        }
+    ]
+}

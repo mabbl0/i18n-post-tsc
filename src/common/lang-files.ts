@@ -128,7 +128,7 @@ function checkLangFileData(data: LangFileData, filePath: string | undefined): bo
     // check if every translation the source lang
     for (let i = 0; i < data.translations.length; i++) {
         if (data.translations[i][data.srcLang] == undefined) {
-            log(LogLevel.Error, `the translation ${data.translations[i].toString()} from the '${filePath}' lang file don't containt the source langage`);
+            log(LogLevel.Error, `the translation ${data.translations[i].toString()} from the '${filePath}' lang file don't contain the source langage`);
             return false;
         }
     }

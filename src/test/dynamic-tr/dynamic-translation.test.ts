@@ -8,7 +8,6 @@ import fs from 'fs';
 const pathToTestDir = './src/test/dynamic-tr/files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
 const dynamicLangFile = "dynamicLangFile.lang.json";
-const idModuleName = "mn";
 setLogLevel(LogLevel.None);
 
 describe('Dynamic File Translation', () => {
@@ -21,8 +20,7 @@ describe('Dynamic File Translation', () => {
         dynamicTranslationPostTsc({
             srcDir: pathToTmpDir,
             outDir: pathToTmpDir,
-            dynamicLangFile: dynamicLangFile,
-            idModuleName: idModuleName
+            dynamicLangFile: dynamicLangFile
         });
 
         // wait 100ms for the translation finish
@@ -30,7 +28,7 @@ describe('Dynamic File Translation', () => {
 
         /** Check the dynamic lang file after the dynamicTranslationPostTsc **/
         let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();
-        expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"mn_code_0":"Hello everyone!","mn_code_1":"Who is here?"}},{"lang":"fr","nbTr":2,"tr":{"mn_code_0":"Bonjour tout le monde !","mn_code_1":"Qui est là ?"}},{"lang":"bzh","nbTr":1,"tr":{"mn_code_0":"Demat dan holl !"}}]}`);
+        expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"code_0":"Hello everyone!","code_1":"Who is here?"}},{"lang":"fr","nbTr":2,"tr":{"code_0":"Bonjour tout le monde !","code_1":"Qui est là ?"}},{"lang":"bzh","nbTr":1,"tr":{"code_0":"Demat dan holl !"}}]}`);
 
 
         /** Execute the translate js file, to check the console log translation **/

@@ -47,7 +47,13 @@ interface InitDynamicTrParameter {
  */
 export function initDynamicTr(initParameter: InitDynamicTrParameter) {
     setLogLevelByStr(initParameter.logLevel);
-    log(LogLevel.Info, `Initiate the dynamic translation data from '${initParameter.dynamicLangPath}'`);
+    
+    if(dynamicTranslationData.data.size == 0) {
+        log(LogLevel.Info, `Initiate the dynamic translation data from '${initParameter.dynamicLangPath}'`);
+    }
+    else {
+        log(LogLevel.Info, `Initiate new dynamic translation data from '${initParameter.dynamicLangPath}'`);
+    }
 
     let dynamicTrJson = loadDynamicLangFile(initParameter.dynamicLangPath);
     log(LogLevel.Debug, 'dynamic data loaded:', dynamicTrJson);
@@ -102,16 +108,32 @@ function checkDynamicTrData(dynamicTrJson: DynamicTranslationDataJson | undefine
  * @param fallbackLang the fallback langage
  */
 function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLang: string[]|undefined) {
-    // Initiate data
+    /*** Initiate data ***/
+
     // find the lang with the more translation (may be the source lang)
     let maxNbTr = 0;
     let langMaxTr: string[] = [];
+    let langData: LangTranslationsData | undefined;
+    let langNb: number|undefined;
     dynamicTrJson.data.forEach( langTrDataJson => {
-        // TODO: manage multiple init from different files
-        dynamicTranslationData.data.set(langTrDataJson.lang, parseJsonLangData(langTrDataJson.tr));
-        dynamicTranslationData.dataNbTr.set(langTrDataJson.lang, langTrDataJson.nbTr);
-        
-        log(LogLevel.Debug, 'langage', langTrDataJson.lang, 'added with', langTrDataJson.nbTr, 'translations');
+        // do not erase the lang, in case of multiple initialization
+        langData = dynamicTranslationData.data.get(langTrDataJson.lang);
+        if(langData != undefined) {
+            Object.assign(langData, parseJsonLangData(langTrDataJson.tr)); // complete and replace the property already in the object
+            log(LogLevel.Debug, langTrDataJson.nbTr, 'new translations added to the', langTrDataJson.lang, 'langage');
+        }
+        else {
+            dynamicTranslationData.data.set(langTrDataJson.lang, parseJsonLangData(langTrDataJson.tr));
+            log(LogLevel.Debug, 'langage', langTrDataJson.lang, 'added with', langTrDataJson.nbTr, 'translations');
+        }
+        langNb = dynamicTranslationData.dataNbTr.get(langTrDataJson.lang);
+        if(langNb != undefined) {
+            dynamicTranslationData.dataNbTr.set(langTrDataJson.lang, langNb + langTrDataJson.nbTr);
+        }
+        else {
+            dynamicTranslationData.dataNbTr.set(langTrDataJson.lang, langTrDataJson.nbTr);
+        }
+    
 
         if(langTrDataJson.nbTr > maxNbTr) {
             maxNbTr = langTrDataJson.nbTr;
@@ -122,6 +144,7 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLa
         }
     });
 
+    /*** The base translation ***/
 
     // intiate the translation to be sure to get a value for each translation
     let trData: LangTranslationsData | undefined;
@@ -129,13 +152,13 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLa
         // choose 'en' lang by default, if several choose
         trData = dynamicTranslationData.data.get('en');
         if(trData!=undefined) {
-            Object.assign(dynamicTranslationData.baseTranslation, trData); // replace the property already in the object
+            Object.assign(dynamicTranslationData.baseTranslation, trData); // complete and replace the property already in the object
         }
     }
     else if(langMaxTr.length != 0) {
         trData = dynamicTranslationData.data.get( langMaxTr[0] );
         if(trData!=undefined) {
-            Object.assign(dynamicTranslationData.baseTranslation, trData); // replace the property already in the object
+            Object.assign(dynamicTranslationData.baseTranslation, trData); // complete and replace the property already in the object
         }
     }
 
@@ -144,18 +167,18 @@ function initDynamicTrData(dynamicTrJson: DynamicTranslationDataJson, fallbackLa
         for (let i = fallbackLang.length-1 ; i >= 0 ; i--) { // reverse process
             trData = dynamicTranslationData.data.get( fallbackLang[i] );
             if(trData!=undefined) {
-                Object.assign(dynamicTranslationData.baseTranslation, trData); // replace the property already in the object
+                Object.assign(dynamicTranslationData.baseTranslation, trData); // complete and replace the property already in the object
             } 
         }
     }
 
     // make sure the base translation is completed with all translation available
     let trKeys: string[];
-    dynamicTranslationData.data.forEach(dTrData => {
-        trKeys = Object.keys(dTrData);
+    dynamicTranslationData.data.forEach(langTrData => {
+        trKeys = Object.keys(langTrData);
         trKeys.forEach(k => {
             if(dynamicTranslationData.baseTranslation[k] == undefined) {
-                dynamicTranslationData.baseTranslation[k] = dTrData[k];
+                dynamicTranslationData.baseTranslation[k] = langTrData[k];
             }
         });
     });
@@ -194,13 +217,13 @@ export function lang(newLang: string) {
         let nbNewTr = dynamicTranslationData.dataNbTr.get(newLang);
         if(nbNewTr!=undefined && nbNewTr>=dynamicTranslationData.nbBaseTr) {
             // the new tr to apply is complete
-            Object.assign(translate, newTrData); // replace the property already in the object
+            Object.assign(translate, newTrData); // complete and replace the property already in the object
         }
         else {
             // re-initiate the translation with the base
             Object.assign(translate, dynamicTranslationData.baseTranslation);
             // then apply the translation choosen
-            Object.assign(translate, newTrData); // replace the property already in the object
+            Object.assign(translate, newTrData); // complete and replace the property already in the object
         }
         log(LogLevel.Info, `Change langage translation to '${newLang}'`);
         log(LogLevel.Debug, 'new translate:', translate);

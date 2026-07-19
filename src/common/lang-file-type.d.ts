@@ -5,7 +5,7 @@
 export interface LangFileData {
     srcFile?: string
     srcLang: string
-    outLang?: string[]
+    //outLang?: string[]
     translations: LangTranslation[]
 }
 

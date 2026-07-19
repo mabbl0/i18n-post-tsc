@@ -42,9 +42,6 @@ function prepareTranslationData(langFiles: LangFile[], staticTrParam: StaticTran
         if (langFiles[i].data.srcLang == staticTrParam.outLang) {
             continue;
         }
-        if ( !checkFileOutLang(langFiles[i].data.outLang, staticTrParam) ) {
-            continue;
-        }
 
         // initiate the list of the lang output wanted
         if(staticTrParam.fallbackLang != undefined) {
@@ -89,31 +86,6 @@ function prepareTranslationData(langFiles: LangFile[], staticTrParam: StaticTran
     log(LogLevel.Debug, staticLangFiles);
     return staticLangFiles;
 }
-
-/**
- * Check if the file content the correct output langage for the translation
- * @param fileOutLang the langage indicate by the file
- * @param staticTrParam the parameter to the static translation
- * @returns indicate if the output langages corresponding to the file data
- */
-function checkFileOutLang(fileOutLang: string[] | undefined, staticTrParam: StaticTranslationParam): boolean {
-    if(fileOutLang==undefined) {
-        // no check if out lang is not indicated by the files
-        return true;
-    }
-    if(fileOutLang.includes(staticTrParam.outLang)) {
-        return true;
-    }
-    if(staticTrParam.fallbackLang != undefined) {
-        for (let i = 0; i < staticTrParam.fallbackLang.length; i++) {
-            if(fileOutLang.includes(staticTrParam.fallbackLang[i])) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 
 /**
  * Choose a output langage translation, if possible
