@@ -86,7 +86,7 @@ function parseArgs(): ParsedArgs {
         })
         .version()
         .strict()
-        .example('$0 --mode static --srcDir src --outDir dist', '')
+        .example('$0 --mode static --srcDir src --outDir dist --outLang fr', '')
         .example('$0 --mode dynamic --srcDir src --outDir dist', '')
 
         .argv as ParsedArgs;

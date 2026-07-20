@@ -5,9 +5,10 @@
   "keywords": [
     "ts",
     "tsc",
+    "i18n",
     "translation",
-    "translate",
-    "i18n"
+    "static translation",
+    "dynamic translation"
   ],
   "homepage": "https://github.com/mabbl0/i18n-post-tsc#readme",
   "bugs": {
