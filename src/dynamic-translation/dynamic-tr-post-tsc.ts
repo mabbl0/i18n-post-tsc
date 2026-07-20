@@ -9,8 +9,8 @@ import { fastReadWrite } from "../tool/file";
 import { DynamicStrInterpolationTr } from "./dynamic-str-interpolation-tr";
 import { reStrInter } from "../common/str-interpolation-tr";
 
-const postTscModule = "dynamic-translation";
-const postTscModuleName = "dynamic_translation";
+const postTscModule = "dynamic-translation-post-tsc";
+const postTscModuleName = "dynamic_translation_post_tsc";
 const postTscTrAccess = ".translate.";
 export const strInterTrAccess = "?.with("; // AccessDynamicStrInterTr.with
 
@@ -34,7 +34,7 @@ export function dynamicTranslationPostTsc(dynamicParameter: DynamicTranslationPa
         processLangFilesData(langFiles, idModuleName, dynamicLangFiles, dynamicTranslationJson);
 
         let distAbsPath = path.resolve(dynamicParameter.outDir);
-        saveDynamicTranslationData(distAbsPath, dynamicParameter.dynamicLangFile, dynamicTranslationJson);
+        saveDynamicTranslationData(distAbsPath, dynamicParameter.dynamicTrData, dynamicTranslationJson);
 
         dynamicLangFiles.forEach(dynamicLangF => {
             ptscDynamicTrFile(distAbsPath, dynamicLangF);
@@ -214,7 +214,7 @@ function saveDynamicTranslationData(distAbsPath: string, dynamicLangFile: string
     let dynamicLangFabsPath = path.resolve(path.format({ dir: distAbsPath, base: dynamicLangFile }));
     fs.writeFile(dynamicLangFabsPath, JSON.stringify(dynamicTranslationJson), "utf-8", (err) => {
         if (err) {
-            log(LogLevel.Error, "");
+            log(LogLevel.Error, "Fail to save the data fiel for the dynamic translation");
             throw err;
         }
         log(LogLevel.Verbose, "Sucessfully save the data for the dynamic translation", dynamicLangFabsPath);

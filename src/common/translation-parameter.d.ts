@@ -21,6 +21,6 @@ export interface StaticTranslationParam extends TranslationParam {
  * The parameter for the dynamic translation
  */
 export interface DynamicTranslationParam extends TranslationParam {
-    dynamicLangFile: string
+    dynamicTrData: string
     idModuleName?: string
 }

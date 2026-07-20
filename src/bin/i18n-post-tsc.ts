@@ -18,10 +18,10 @@ interface ParsedArgs extends yargs.Arguments {
     outDir: string
 
     outLang: string
-    fallbackLang: string[]
+    fallbackLang?: string[]
 
-    dynamicLangFile: string
-    idModuleName: string
+    dynamicTrData: string
+    idModuleName?: string
 }
 
 function parseArgs(): ParsedArgs {
@@ -75,9 +75,10 @@ function parseArgs(): ParsedArgs {
         })
 
         // dynamic mode parameter
-        .option('dynamicLangFile', {
+        .option('dynamicTrData', {
             type: 'string',
-            description: "path to the langage file data for the dynamic translation"
+            default: "dynamicTrData.lang.json",
+            description: "path to save the data file for the dynamic translation"
         })
         .option('idModuleName', {
             type: 'string',
@@ -86,6 +87,7 @@ function parseArgs(): ParsedArgs {
         .version()
         .strict()
         .example('$0 --mode static --srcDir src --outDir dist', '')
+        .example('$0 --mode dynamic --srcDir src --outDir dist', '')
 
         .argv as ParsedArgs;
 }
@@ -115,14 +117,14 @@ function main(): void {
             });
             break;
         case 'dynamic':
-            if(!args.srcDir || !args.outDir || !args.dynamicLangFile) {
-                throw "Dynamic mode require the options: srcDir ; outDir ; dynamicLangFile";
+            if(!args.srcDir || !args.outDir) {
+                throw "Dynamic mode require the options: srcDir ; outDir";
             }
 
             dynamicTranslationPostTsc({
                 srcDir: args.srcDir,
                 outDir: args.outDir,
-                dynamicLangFile: args.dynamicLangFile,
+                dynamicTrData: args.dynamicTrData,
                 idModuleName: args.idModuleName
             })
             break;

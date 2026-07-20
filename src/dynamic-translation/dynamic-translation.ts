@@ -24,9 +24,13 @@ export var translate: LangTranslationsData = {};
 
 interface InitDynamicTrParameter {
     /**
-     * Path to the dynamic langage file
+     * Output directory to find the dynamic translation data file
      */
-    dynamicLangPath: string,
+    outDir: string,
+    /**
+     * Path to the data for the dynamic translation file from the output directory
+     */
+    dynamicTrData?: string,
     /**
      * the start langage to beging the translation
      */
@@ -48,33 +52,41 @@ interface InitDynamicTrParameter {
 export function initDynamicTr(initParameter: InitDynamicTrParameter) {
     setLogLevelByStr(initParameter.logLevel);
     
-    if(dynamicTranslationData.data.size == 0) {
-        log(LogLevel.Info, `Initiate the dynamic translation data from '${initParameter.dynamicLangPath}'`);
+    let absPathToDynTrData: string;
+    if(initParameter.dynamicTrData!=undefined) {
+        absPathToDynTrData = path.resolve(initParameter.outDir, initParameter.dynamicTrData);
     }
     else {
-        log(LogLevel.Info, `Initiate new dynamic translation data from '${initParameter.dynamicLangPath}'`);
+        absPathToDynTrData = path.resolve(initParameter.outDir, "dynamicTrData.lang.json");
     }
 
-    let dynamicTrJson = loadDynamicLangFile(initParameter.dynamicLangPath);
+    if(dynamicTranslationData.data.size == 0) {
+        log(LogLevel.Info, `Initiate the dynamic translation data from '${absPathToDynTrData}'`);
+    }
+    else {
+        log(LogLevel.Info, `Initiate new dynamic translation data from '${absPathToDynTrData}'`);
+    }
+
+    let dynamicTrJson = loadDynamicLangFile(absPathToDynTrData);
     log(LogLevel.Debug, 'dynamic data loaded:', dynamicTrJson);
     if( dynamicTrJson==undefined || !checkDynamicTrData(dynamicTrJson) ) {
-        log(LogLevel.Error, `dynamic translation data from '${initParameter.dynamicLangPath}' lang file is incorrect`);
+        log(LogLevel.Error, `dynamic translation data from '${absPathToDynTrData}' lang file is incorrect`);
         return;
     }
 
     initDynamicTrData(dynamicTrJson, initParameter.fallbackLang);
     // change the lang to start lang
     lang(initParameter.langStart);
-    log(LogLevel.Verbose, 'Sucessfully initiate the dynamic translation data');
+    log(LogLevel.Info, 'Sucessfully initiate the dynamic translation data');
 }
 
 /**
  * Load he data from the dynamic lang file
- * @param dynamicLangPath the path to the dynamic lang file
+ * @param absPathToDynTrData Path to the data for the dynamic translation file from the output directory
  * @returns the content data readed, or undefined if fail
  */
-function loadDynamicLangFile(dynamicLangPath: string): DynamicTranslationDataJson | undefined {
-    const fileContent = fs.readFileSync( path.resolve(dynamicLangPath), 'utf-8');
+function loadDynamicLangFile(absPathToDynTrData: string): DynamicTranslationDataJson | undefined {
+    const fileContent = fs.readFileSync( absPathToDynTrData, 'utf-8');
     if(fileContent.length!=0) {
         return JSON.parse(fileContent) as DynamicTranslationDataJson;
     }
