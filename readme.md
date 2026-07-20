@@ -1,8 +1,11 @@
-`post-tsc-i18n` is a i18n (internationalization / translation) package for your TS project.  
-The idea is to inject the translation after the compilation into the JS code, to keep the TS code clean with the minimum i18n.
+`i18n-post-tsc` is a simple i18n (internationalization / translation) package for your TS project.  
+The idea is to inject the translation after the tsc compilation into the JS code, to not impact your TS code.
 
-`post-tsc-i18n` gives the possibilities to:  
-- get a dynamic and/or static tanslation
+`i18n-post-tsc` features:  
+- easy to implement / minimum impact with your existing code.
+- Static translation. Inject your target translation once after the tsc.
+- Dynamic translation. The access to the translation is injected in the JS files. You need just to add an initiation and a way to change langage.
+- switch easily between the Static and Dynamic translation mode.
 
 
 # Install

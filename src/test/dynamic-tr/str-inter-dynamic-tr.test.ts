@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { LogLevel, setLogLevel } from "../../tool/log";
-import { dynamicTranslationPostTsc } from '../../dynamic-translation/dynamic-tr-post-tsc';
+import { dynamicTranslationPostTsc } from '../../dynamic-translation/post-tsc-dynamic-tr';
 
 import { execSync } from 'child_process';
 import fs from 'fs';
 
 const pathToTestDir = './src/test/dynamic-tr/str-inter-files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
-const dynamicLangFile = "dynamicLangFile.lang.json";
+const dynamicTrData = "dynamicTrData.lang.json";
 setLogLevel(LogLevel.Info);
 
 describe('Dynamic File Translation', () => {
@@ -20,14 +20,14 @@ describe('Dynamic File Translation', () => {
         dynamicTranslationPostTsc({
             srcDir: pathToTmpDir,
             outDir: pathToTmpDir,
-            dynamicLangFile: dynamicLangFile
+            dynamicTrData: dynamicTrData
         });
 
         // wait 100ms for the translation finish
         await new Promise(resolve => setTimeout(resolve, 300));
 
         /** Check the dynamic lang file after the dynamicTranslationPostTsc **/
-        let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();
+        let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicTrData).toString();
         expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"code_0":{"splitTr":["may be "," person? or ","?"],"mapIdOrder":[]},"code_1":{"splitTr":["","'s "," cars"],"mapIdOrder":[0,1]}}},{"lang":"fr","nbTr":2,"tr":{"code_0":{"splitTr":["peut être "," personne ? ou "," ?"],"mapIdOrder":[]},"code_1":{"splitTr":["les "," voitures de ",""],"mapIdOrder":[1,0]}}}]}`);
 
 

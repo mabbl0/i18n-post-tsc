@@ -67,6 +67,7 @@ export function initDynamicTr(initParameter: InitDynamicTrParameter) {
         log(LogLevel.Info, `Initiate new dynamic translation data from '${absPathToDynTrData}'`);
     }
 
+
     let dynamicTrJson = loadDynamicLangFile(absPathToDynTrData);
     log(LogLevel.Debug, 'dynamic data loaded:', dynamicTrJson);
     if( dynamicTrJson==undefined || !checkDynamicTrData(dynamicTrJson) ) {
@@ -86,9 +87,14 @@ export function initDynamicTr(initParameter: InitDynamicTrParameter) {
  * @returns the content data readed, or undefined if fail
  */
 function loadDynamicLangFile(absPathToDynTrData: string): DynamicTranslationDataJson | undefined {
-    const fileContent = fs.readFileSync( absPathToDynTrData, 'utf-8');
-    if(fileContent.length!=0) {
-        return JSON.parse(fileContent) as DynamicTranslationDataJson;
+    try {
+        const fileContent = fs.readFileSync( absPathToDynTrData, 'utf-8');
+        if(fileContent.length!=0) {
+            return JSON.parse(fileContent) as DynamicTranslationDataJson;
+        }
+    } catch (error) {
+        log(LogLevel.Error, 'Fail to read the dynamic translation data');
+        log(LogLevel.Error, error);
     }
     return undefined;
 }

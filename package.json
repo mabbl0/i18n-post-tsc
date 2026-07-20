@@ -9,13 +9,13 @@
     "translate",
     "i18n"
   ],
-  "homepage": "https://github.com/mabbl0/post-tsc-i18n#readme",
+  "homepage": "https://github.com/mabbl0/i18n-post-tsc#readme",
   "bugs": {
-    "url": "https://github.com/mabbl0/post-tsc-i18n/issues"
+    "url": "https://github.com/mabbl0/i18n-post-tsc/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mabbl0/post-tsc-i18n.git"
+    "url": "git+https://github.com/mabbl0/i18n-post-tsc.git"
   },
   "license": "MIT",
   "author": "mabbl0",

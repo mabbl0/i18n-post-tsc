@@ -5,5 +5,5 @@
     "outDir": "./packages/dynamic-translation-post-tsc/dist"
     
   },
-  "files": ["src/dynamic-translation/dynamic-translation.ts"]
+  "files": ["src/dynamic-translation/dynamic-translation-post-tsc.ts"]
 }

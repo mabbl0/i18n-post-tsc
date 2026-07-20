@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { LogLevel, setLogLevel } from "../../tool/log";
-import { dynamicTranslationPostTsc } from '../../dynamic-translation/dynamic-tr-post-tsc';
+import { dynamicTranslationPostTsc } from '../../dynamic-translation/post-tsc-dynamic-tr';
 
 import { execSync } from 'child_process';
 import fs from 'fs';
 
 const pathToTestDir = './src/test/dynamic-tr/files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
-const dynamicLangFile = "dynamicLangFile.lang.json";
+const dynamicTrData = "dynamicTrData.lang.json";
 setLogLevel(LogLevel.Info);
 
 describe('Dynamic File Translation', () => {
@@ -20,14 +20,14 @@ describe('Dynamic File Translation', () => {
         dynamicTranslationPostTsc({
             srcDir: pathToTmpDir,
             outDir: pathToTmpDir,
-            dynamicLangFile: dynamicLangFile
+            dynamicTrData: dynamicTrData
         });
 
         // wait 100ms for the translation finish
         await new Promise(resolve => setTimeout(resolve, 300));
 
         /** Check the dynamic lang file after the dynamicTranslationPostTsc **/
-        let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicLangFile).toString();
+        let dynLangFile = fs.readFileSync(pathToTmpDir + '/' + dynamicTrData).toString();
         expect(dynLangFile).equal(`{"data":[{"lang":"en","nbTr":2,"tr":{"code_0":"Hello everyone!","code_1":"Who is here?"}},{"lang":"fr","nbTr":2,"tr":{"code_0":"Bonjour tout le monde !","code_1":"Qui est là ?"}},{"lang":"bzh","nbTr":1,"tr":{"code_0":"Demat dan holl !"}}]}`);
 
 

@@ -3,7 +3,7 @@
 import yargs from 'yargs';
 import { staticTranslation } from '../static-translation/static-translation';
 import { LogLevel, setLogLevel, setLogLevelByStr, StrLogLevel } from '../tool/log';
-import { dynamicTranslationPostTsc } from '../dynamic-translation/dynamic-tr-post-tsc';
+import { dynamicTranslationPostTsc } from '../dynamic-translation/post-tsc-dynamic-tr';
 
 // TODO: add a config file with the arg option
 

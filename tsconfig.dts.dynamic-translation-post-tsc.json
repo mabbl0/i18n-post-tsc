@@ -4,5 +4,5 @@
       "removeComments": false,
       "emitDeclarationOnly": true
 	},
-  "include": ["src/dynamic-translation/dynamic-translation.ts"]
+  "include": ["src/dynamic-translation/dynamic-translation-post-tsc.ts"]
 }

@@ -1,9 +1,10 @@
 "use strict";
-const dynamic_translation_1 = require("../../../../../packages/dynamic-translation-post-tsc/dist/dynamic-translation/dynamic-translation");
+const dynamic_translation_post_tsc_1 = require("../../../../../packages/dynamic-translation-post-tsc/dist/dynamic-translation/dynamic-translation-post-tsc");
 
 
-dynamic_translation_1.initDynamicTr({
-    dynamicLangPath: `./src/test/dynamic-tr/files-to-test-multiple-init-tmp/module1/dynamicLangFile.lang.json`,
+dynamic_translation_post_tsc_1.initDynamicTr({
+    outDir: './src/test/dynamic-tr/files-to-test-multiple-init-tmp/module1',
+    dynamicTrData: 'dynamicTrData.lang.json',
     langStart: 'fr',
     fallbackLang: ['fr', 'en'],
     logLevel: 'none'

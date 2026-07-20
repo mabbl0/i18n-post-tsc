@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { LogLevel, setLogLevel } from "../../tool/log";
-import { dynamicTranslationPostTsc } from '../../dynamic-translation/dynamic-tr-post-tsc';
+import { dynamicTranslationPostTsc } from '../../dynamic-translation/post-tsc-dynamic-tr';
 
 import { execSync } from 'child_process';
 import fs from 'fs';
 
 const pathToTestDir = './src/test/dynamic-tr/files-to-test-multiple-init';
 const pathToTmpDir = pathToTestDir + '-tmp';
-const dynamicLangFile = "dynamicLangFile.lang.json";
+const dynamicTrData = "dynamicTrData.lang.json";
 
 const pathToModule1 = pathToTmpDir + '/module1';
 const idModuleName1 = "m1";
@@ -28,7 +28,7 @@ describe('Dynamic File Translation with multiple module using dynamic translatio
         dynamicTranslationPostTsc({
             srcDir: pathToModule1,
             outDir: pathToModule1,
-            dynamicLangFile: dynamicLangFile,
+            dynamicTrData: dynamicTrData,
             idModuleName: idModuleName1
         });
 
@@ -36,7 +36,7 @@ describe('Dynamic File Translation with multiple module using dynamic translatio
         dynamicTranslationPostTsc({
             srcDir: pathToModule2,
             outDir: pathToModule2,
-            dynamicLangFile: dynamicLangFile,
+            dynamicTrData: dynamicTrData,
             idModuleName: idModuleName2
         });
 
