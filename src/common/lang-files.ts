@@ -76,12 +76,12 @@ function readDataLangFile(readParam: ReadLangFileParam) {
             if ((jsonData as LangFileData).srcLang == undefined && (jsonData as LangFileData[]).forEach != undefined) {
                 // this file content data for multiple files 
                 (jsonData as LangFileData[]).forEach((d) => {
-                    if (checkLangFileData(d, d.srcFile)) {
+                    if (checkLangFileData(d, d.filePath)) {
                         rParam.langFiles.push({
-                            pathFromSrc: d.srcFile as string, //trust
+                            pathFromSrc: d.filePath as string, //trust
                             data: d
                         });
-                        log(LogLevel.Verbose, `Read the data for the file: ${d.srcFile}`);
+                        log(LogLevel.Verbose, `Read the data for the file: ${d.filePath}`);
                     }
                 });
             }

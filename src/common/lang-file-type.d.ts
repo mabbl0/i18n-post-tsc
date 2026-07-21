@@ -1,15 +1,27 @@
 
 /**
- * Lang file data write by the developer
+ * Translation data file content
+ */
+export type LangFileContent = LangFileData | LangFileData[];
+
+/**
+ * Translation data for one file
  */
 export interface LangFileData {
-    srcFile?: string
+    /**
+     * the path to the file from the output directory
+     */
+    filePath?: string
+    /**
+     * the langage in the source file
+     */
     srcLang: string
-    //outLang?: string[]
+    /**
+     * the translation to apply in the file
+     */
     translations: LangTranslation[]
 }
 
-export type LangFileContent = LangFileData | LangFileData[];
 
 
 /**
@@ -21,12 +33,8 @@ export interface LangFile {
 }
 
 /**
- * The differentes translation for 1 content:
- * {
- *  "en": "hello everyone!",
- *  "fr": "bonjour tout le monde !",
- *  "bzh": "demat d'an holl !"
- * }
+ * The different translation for one string
+ * where the key is the langage
  */
 interface LangTranslation {
     [key: string]: string

@@ -59,12 +59,12 @@ function prepareTranslationData(langFiles: LangFile[], staticTrParam: StaticTran
         };
 
         // add possible path to the file
-        if(langFiles[i].data.srcFile != undefined) {
-            if( path.extname(langFiles[i].data.srcFile as string).length == 0) {
-                staticLangF.pathToJs.push((langFiles[i].data.srcFile as string) + '.js');
+        if(langFiles[i].data.filePath != undefined) {
+            if( path.extname(langFiles[i].data.filePath as string).length == 0) {
+                staticLangF.pathToJs.push((langFiles[i].data.filePath as string) + '.js');
             }
             else {
-                staticLangF.pathToJs.push(langFiles[i].data.srcFile as string);
+                staticLangF.pathToJs.push(langFiles[i].data.filePath as string);
             }
         }
 

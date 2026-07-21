@@ -32,7 +32,7 @@ interface InitDynamicTrParameter {
      */
     dynamicTrData?: string,
     /**
-     * the start langage to beging the translation
+     * the langage to start the translation
      */
     langStart: string,
     /**
@@ -229,6 +229,12 @@ function parseJsonLangData(trDataJson: TranslationsDataJson): LangTranslationsDa
  * @param newLang the new lang to apply
  */
 export function lang(newLang: string) {
+    if(dynamicTranslationData.nbBaseTr == 0) {
+        // no data loaded
+        log(LogLevel.Error, "No data to change translation langage");
+        return;
+    }
+
     // find and apply the new lang
     let newTrData = dynamicTranslationData.data.get(newLang);
     if(newTrData!=undefined) {

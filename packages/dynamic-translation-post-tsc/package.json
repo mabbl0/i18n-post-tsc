@@ -18,5 +18,5 @@
     ".dist"
   ],
   "types": "./dist/index.d.ts",
-  "main": "./dist/dynamic-translation/dynamic-translation.js"
+  "main": "./dist/dynamic-translation/dynamic-translation-post-tsc.js"
 }
