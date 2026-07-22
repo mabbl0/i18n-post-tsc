@@ -10,6 +10,7 @@ const reExt = /\w+\.lang\.json$/g;
 /**
  * Parameter to read the lang files
  * @param srcAbsPath absolute path to the source directory
+ * @param overrideOutFile override every output JS files to a unique output JS file (index.js for example)
  * @param langFilesPath path to the files to read
  * @param currentFileIndex the index of the current data to read
  * @param langFiles data lang files
@@ -17,6 +18,7 @@ const reExt = /\w+\.lang\.json$/g;
  */
 interface ReadLangFileParam {
     srcAbsPath: string,
+    overrideOutFile: string|undefined,
     langFilesPath: string[],
     currentFileIndex: number,
     langFiles: LangFile[],
@@ -26,9 +28,15 @@ interface ReadLangFileParam {
 /**
  * find and read the langages files
  * @param srcPath the path to the source directory
+ * @param overrideOutFile override every output JS files to a unique output JS file (index.js for example)
+ * @param callback callback call when every files are read
  */
-export function readLangFiles(srcPath: string, callback: (langFiles: LangFile[]) => void) {
+export function readLangFiles(srcPath: string, overrideOutFile: string|undefined, callback: (langFiles: LangFile[]) => void) {
     let srcAbsPath = path.resolve(srcPath);
+
+    if(overrideOutFile!=undefined) {
+        log(LogLevel.Verbose, `output files override by: ${overrideOutFile}`);
+    }
 
     let langFilesPath: string[] = [];
     getLangFiles(srcAbsPath, langFilesPath);
@@ -36,6 +44,7 @@ export function readLangFiles(srcPath: string, callback: (langFiles: LangFile[])
 
     readDataLangFile({
         srcAbsPath: srcAbsPath,
+        overrideOutFile: overrideOutFile,
         langFilesPath: langFilesPath,
         currentFileIndex: 0,
         langFiles: [],
@@ -49,6 +58,7 @@ export function readLangFiles(srcPath: string, callback: (langFiles: LangFile[])
 /**
  * read data of all the lang files
  * @param langFilesPath path to the files to read
+ * @param overrideOutFile override every output JS files to a unique output JS file (index.js for example)
  * @param currentFileIndex the index of the current data to read
  * @param langFiles data lang files
  * @param endCallback callback after read all lang files
@@ -78,7 +88,8 @@ function readDataLangFile(readParam: ReadLangFileParam) {
                 (jsonData as LangFileData[]).forEach((d) => {
                     if (checkLangFileData(d, d.filePath)) {
                         rParam.langFiles.push({
-                            pathFromSrc: d.filePath as string, //trust
+                            pathFromSrc: rParam.overrideOutFile!=undefined ? 
+                                rParam.overrideOutFile : d.filePath as string, //trust
                             data: d
                         });
                         log(LogLevel.Verbose, `Read the data for the file: ${d.filePath}`);
@@ -89,7 +100,9 @@ function readDataLangFile(readParam: ReadLangFileParam) {
                 // data for only one file
                 if (checkLangFileData(jsonData as LangFileData, rParam.langFilesPath[rParam.currentFileIndex])) {
                     rParam.langFiles.push({
-                        pathFromSrc: path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex]).slice(0, -langFileExt.length) + '.js',
+                        pathFromSrc: rParam.overrideOutFile!=undefined ? 
+                            rParam.overrideOutFile : 
+                            path.relative(rParam.srcAbsPath, rParam.langFilesPath[rParam.currentFileIndex]).slice(0, -langFileExt.length) + '.js',
                         data: jsonData as LangFileData
                     });
                     log(LogLevel.Verbose, `Read the lang file: ${rParam.langFilesPath[rParam.currentFileIndex]}`);
@@ -101,6 +114,7 @@ function readDataLangFile(readParam: ReadLangFileParam) {
         // continue to read the next files
         readDataLangFile({
             srcAbsPath: rParam.srcAbsPath,
+            overrideOutFile: rParam.overrideOutFile,
             langFilesPath: rParam.langFilesPath,
             currentFileIndex: rParam.currentFileIndex + 1,
             langFiles: rParam.langFiles,

@@ -26,7 +26,7 @@ export function dynamicTranslationPostTsc(dynamicParameter: DynamicTranslationPa
     log(LogLevel.Verbose, `Dynamic Translation Post tsc for the '${dynamicParameter.srcDir}' source path`);
     
     let idModuleName = idModuleNameToIdentifer(dynamicParameter.idModuleName);
-    readLangFiles(dynamicParameter.srcDir, langFiles => {
+    readLangFiles(dynamicParameter.srcDir, dynamicParameter.overrideOutFile, langFiles => {
         let dynamicLangFiles: PtscDynamicLangFile[] = [];
         let dynamicTranslationJson: DynamicTranslationDataJson = {
             data: []
@@ -36,9 +36,7 @@ export function dynamicTranslationPostTsc(dynamicParameter: DynamicTranslationPa
         let distAbsPath = path.resolve(dynamicParameter.outDir);
         saveDynamicTranslationData(distAbsPath, dynamicParameter.dynamicTrData, dynamicTranslationJson);
 
-        dynamicLangFiles.forEach(dynamicLangF => {
-            ptscDynamicTrFile(distAbsPath, dynamicLangF);
-        });
+        syncUpdateFilesForDynamicTr(distAbsPath, dynamicLangFiles, 0);
     });
 
 }
@@ -221,12 +219,32 @@ function saveDynamicTranslationData(distAbsPath: string, dynamicLangFile: string
     });
 }
 
+
+/**
+ * Synchro update files for dynamic translation
+ * @param distAbsPath absolute path to the output directory
+ * @param dynamicLangFiles the dynamic lang files data
+ * @param indexToUp the index to the files to update
+ */
+function syncUpdateFilesForDynamicTr(distAbsPath: string, dynamicLangFiles: PtscDynamicLangFile[], indexToUp: number) {
+    if(indexToUp >= dynamicLangFiles.length) {
+        log(LogLevel.Info, "Successfully update the project!");
+        return;
+    }
+
+    updateFileForDynamicTr(distAbsPath, dynamicLangFiles[indexToUp], 
+        () => syncUpdateFilesForDynamicTr(distAbsPath, dynamicLangFiles, indexToUp+1)
+    );
+}
+
+
+
 /**
  * Update the js file after the tsc for the dynamic translation
  * @param distAbsPath the absolute path to the output directory
  * @param dynamicLangFiles the lang file data for the post tsc dynamic translation
  */
-function ptscDynamicTrFile(distAbsPath: string, dynamicLangF: PtscDynamicLangFile) {
+function updateFileForDynamicTr(distAbsPath: string, dynamicLangF: PtscDynamicLangFile, endCallback: ()=>void) {
     if (distAbsPath.length == 0) {
         log(LogLevel.Error, `empty absolute dist path: ${distAbsPath}`);
         return;
@@ -243,7 +261,7 @@ function ptscDynamicTrFile(distAbsPath: string, dynamicLangF: PtscDynamicLangFil
     }
 
 
-    readWriteFiles(distAbsPath, dynamicLangF, 0);
+    readWriteFiles(distAbsPath, dynamicLangF, 0, endCallback);
 }
 
 /**
@@ -253,7 +271,7 @@ function ptscDynamicTrFile(distAbsPath: string, dynamicLangF: PtscDynamicLangFil
  * @param dynamicLangFile the lang file data for the post tsc dynamic translation
  * @param pathToTest the path index to test
  */
-function readWriteFiles(distAbsPath: string, dynamicLangFile: PtscDynamicLangFile, pathToTest: number) {
+function readWriteFiles(distAbsPath: string, dynamicLangFile: PtscDynamicLangFile, pathToTest: number, endCallback: ()=>void) {
     if (pathToTest >= dynamicLangFile.pathToJs.length) {
         log(LogLevel.Error, `Fail to find the file to update: ${dynamicLangFile.fileName}`);
         return;
@@ -267,14 +285,16 @@ function readWriteFiles(distAbsPath: string, dynamicLangFile: PtscDynamicLangFil
             if (err) {
                 if (pathToTest + 1 < dynamicLangFile.pathToJs.length) {
                     log(LogLevel.Verbose, `try an other path, fail to find the path: ${absPath}`);
-                    readWriteFiles(distAbsPath, dynamicLangFile, pathToTest + 1);
+                    readWriteFiles(distAbsPath, dynamicLangFile, pathToTest + 1, endCallback);
                 }
                 else {
                     log(LogLevel.Error, err);
+                    endCallback();
                 }
             }
             else {
                 log(LogLevel.Verbose, `Successfully update the '${dynamicLangFile.fileName}' file`);
+                endCallback();
             }
         });
 }

@@ -15,8 +15,8 @@ In static mode, the `i18n-post-tsc` command:
 ## Your TS code source
 
 No need to adapt your code source. Write your code as usuall, in your favourite langage.  
-Use the `'`, `"` or ``` `` delimeters for your string.  
-Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md): ```${}```
+Use the `'`, `"` or `` ` `` delimeters for your string.  
+Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md): `` `${}` ``
 
 Two files can be code in two differents langages.
 But, all the string in one file must be in the same langage. 
@@ -73,6 +73,7 @@ The arguments for the static mode command:
 - outDir: indicate directory path to the JS files with the string to translate. Required
 - outLang: indicate the langage to translate. Required
 
+- overrideOutFile: override every output JS files to a unique output JS file (index.js for example). Not Required
 - fallbackLang: indicate the fallback langages, in the case if the target langage is not available for some translation. Not required
 
 

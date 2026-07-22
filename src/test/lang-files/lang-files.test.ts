@@ -10,7 +10,7 @@ describe('Read lang files in test directory', () => {
         expect.hasAssertions();
 
         const lFiles: LangFile[] = await new Promise((resolve) => {
-            readLangFiles('./src/test/lang-files/', resolve);
+            readLangFiles('./src/test/lang-files/', undefined, resolve);
         });
         // Read exactly 2, the other lang file are not added
 
@@ -28,7 +28,7 @@ describe('Read lang files in test directory', () => {
             {
                 pathFromSrc: 'sub-dir\\sub-code.js',
                 data: {
-                    srcFile: 'sub-code.ts', srcLang: 'en', translations: [
+                    filePath: 'sub-code.ts', srcLang: 'en', translations: [
                         { en: "may be ${} person? ${}?", fr: "peut être ${} personne ? ${} ?" },
                         { en: "${1}'s ${2} cars", fr: "les ${2} voitures de ${1}" }
                     ]

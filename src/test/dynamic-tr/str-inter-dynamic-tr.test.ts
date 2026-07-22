@@ -8,7 +8,7 @@ import fs from 'fs';
 const pathToTestDir = './src/test/dynamic-tr/str-inter-files-to-test';
 const pathToTmpDir = pathToTestDir + '-tmp';
 const dynamicTrData = "dynamicTrData.lang.json";
-setLogLevel(LogLevel.Info);
+setLogLevel(LogLevel.None);
 
 describe('Dynamic File Translation', () => {
 

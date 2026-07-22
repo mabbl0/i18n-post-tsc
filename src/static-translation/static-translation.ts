@@ -14,13 +14,11 @@ import { StaticStrInterpolationTr } from "./static-str-interpolation-tr";
  */
 export function staticTranslation(staticTrParam: StaticTranslationParam) {
     log(LogLevel.Verbose, `Static Translation of the '${staticTrParam.srcDir}' source path`);
-    readLangFiles(staticTrParam.srcDir, langFiles => {
+    readLangFiles(staticTrParam.srcDir, staticTrParam.overrideOutFile, langFiles => {
         let staticLangFiles = prepareTranslationData(langFiles, staticTrParam);
         let distAbsPath = path.resolve(staticTrParam.outDir);
 
-        staticLangFiles.forEach(staticLangF => {
-            translateFile(distAbsPath, staticLangF);
-        });
+        syncStaticTranslateFiles(distAbsPath, staticLangFiles, 0);
     });
 }
 
@@ -123,11 +121,29 @@ function addOneTranslation(staticTrArr: StaticTranslation[], srcTr: string, outT
 }
 
 /**
+ * Synchro Static Translate the files
+ * @param distAbsPath absolute path to the output directory
+ * @param staticLangFiles the static lang files data
+ * @param indexToTr the index to the files to translate
+ */
+function syncStaticTranslateFiles(distAbsPath: string, staticLangFiles: StaticLangFile[], indexToTr: number) {
+    if(indexToTr >= staticLangFiles.length) {
+        log(LogLevel.Info, "Successfully translate the project!");
+        return;
+    }
+
+    translateFile(distAbsPath, staticLangFiles[indexToTr], 
+        () => syncStaticTranslateFiles(distAbsPath, staticLangFiles, indexToTr+1)
+    );
+}
+
+
+/**
  * Static Translate to a file
  * @param distAbsPath the absolute path to the output directory
  * @param staticLangFile the static translation information for the file
  */
-function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
+function translateFile(distAbsPath: string, staticLangFile: StaticLangFile, endCallback: ()=>void) {
     if (distAbsPath.length == 0) {
         log(LogLevel.Error, `empty absolute dist path: ${distAbsPath}`);
         return;
@@ -143,7 +159,7 @@ function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
         return;
     }
 
-    readWriteTranslateFile(distAbsPath, staticLangFile, 0);
+    readWriteTranslateFile(distAbsPath, staticLangFile, 0, endCallback);
 }
 
 /**
@@ -153,7 +169,7 @@ function translateFile(distAbsPath: string, staticLangFile: StaticLangFile) {
  * @param staticLangFile the static translation information for the file
  * @param pathToTest the path index to test
  */
-function readWriteTranslateFile(distAbsPath: string, staticLangFile: StaticLangFile, pathToTest: number) {
+function readWriteTranslateFile(distAbsPath: string, staticLangFile: StaticLangFile, pathToTest: number, endCallback: ()=>void) {
     if(pathToTest >= staticLangFile.pathToJs.length) {
         log(LogLevel.Error, `Fail to find the file to translate: ${staticLangFile.fileName}`);
         return;
@@ -167,14 +183,16 @@ function readWriteTranslateFile(distAbsPath: string, staticLangFile: StaticLangF
             if (err) {
                 if(pathToTest+1 < staticLangFile.pathToJs.length) {
                     log(LogLevel.Verbose, `try an other path, fail to find the path: ${absPath}`);
-                    readWriteTranslateFile(distAbsPath, staticLangFile, pathToTest+1);
+                    readWriteTranslateFile(distAbsPath, staticLangFile, pathToTest+1, endCallback);
                 }
                 else {
                     log(LogLevel.Error, err);
+                    endCallback();
                 }
             }
             else {
                 log(LogLevel.Verbose, `Successfully translate the '${staticLangFile.fileName}' file`);
+                endCallback();
             }
         });
 }

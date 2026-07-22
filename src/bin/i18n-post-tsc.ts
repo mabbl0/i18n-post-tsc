@@ -16,6 +16,7 @@ interface ParsedArgs extends yargs.Arguments {
     mode: PtiMode
     srcDir: string
     outDir: string
+    overrideOutFile: string
 
     outLang: string
     fallbackLang?: string[]
@@ -60,6 +61,10 @@ function parseArgs(): ParsedArgs {
             type: 'string',
             default: "dist",
             description: "the output directory"
+        })
+        .option('overrideOutFile', {
+            type: 'string',
+            description: "override every output JS files to a unique output JS file (index.js for example)"
         })
 
         // static mode parameter
@@ -112,6 +117,7 @@ function main(): void {
             staticTranslation({
                 srcDir: args.srcDir,
                 outDir: args.outDir,
+                overrideOutFile: args.overrideOutFile,
                 outLang: args.outLang,
                 fallbackLang: args.fallbackLang
             });
@@ -124,6 +130,7 @@ function main(): void {
             dynamicTranslationPostTsc({
                 srcDir: args.srcDir,
                 outDir: args.outDir,
+                overrideOutFile: args.overrideOutFile,
                 dynamicTrData: args.dynamicTrData,
                 idModuleName: args.idModuleName
             })

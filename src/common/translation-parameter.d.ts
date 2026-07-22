@@ -5,6 +5,8 @@ export interface TranslationParam {
     srcDir: string
     /** path to the output / dist directory */
     outDir: string
+    /** override every output JS files to a unique output JS file (index.js for example) */
+    overrideOutFile?: string
 }
 
 /**

@@ -25,8 +25,8 @@ the `dynamic-translation-post-tsc` package gives the possibility to change the l
 ## Your TS code source
 
 Write your code as usuall, in your favourite langage.  
-Use the `'`, `"` or ``` `` delimeters for your string.  
-Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md): ```${}```
+Use the `'`, `"` or `` ` `` delimeters for your string.  
+Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md): `` `${}` ``
 
 Two files can be code in two differents langages.
 But, all the string in one file must be in the same langage. 
@@ -116,6 +116,7 @@ The arguments for the dynamic mode command:
 - srcDir: indicate directory path to find the translation data files. Required
 - outDir: indicate directory path to the JS files with the string to translate. Required
 
+- overrideOutFile: override every output JS files to a unique output JS file (index.js for example). Not Required
 - dynamicTrData: indicate the path from the outDir, to save the data file for the dynamic translation. "dynamicTrData.lang.json" by default. Not required
 - idModuleName: indicate an identifier name to add to every translation id. Not required
 

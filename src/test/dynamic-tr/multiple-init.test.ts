@@ -14,7 +14,7 @@ const idModuleName1 = "m1";
 const pathToModule2 = pathToTmpDir + '/module2';
 const idModuleName2 = "m2";
 
-setLogLevel(LogLevel.Info);
+setLogLevel(LogLevel.None);
 
 
 describe('Dynamic File Translation with multiple module using dynamic translation post tsc', () => {

@@ -5,6 +5,8 @@ Same for the static or dynamic mode, the translation data files indicates to the
 
 One data file can include the translation for one or several files.
 
+At the `i18n-post-tsc` command run, the `overrideOutFile` parameter override every output JS file path to a unique file (index.js for example).
+
 The translation data files are `json` files, with the `.lang.json` extension.
 
 ## JSON file format
@@ -44,7 +46,8 @@ interface LangTranslation {
 }
 ```
 
-By default the `filePath` is the path and the name to the tranlsation data file.
+By default the `filePath` is the path and the name to the tranlsation data file.  
+But the `overrideOutFile` parameter override every output file path to a unique file.
 
 
 ## Examples
@@ -149,4 +152,49 @@ Project organisation for this example:
   }
 ]
 ```
+
+
+### multiple translation data files with overrideOutFile
+
+The `i18n-post-tsc` command is run with the parameter: `--overrideOutFile index.js`
+
+Project organisation for this example:
+```
+|-dist
+    |-index.js
+|-src
+    |-code1.lang.json
+    |-code1.ts
+    |-sub-dir
+        |-code2.lang.json
+        |-code2.ts
+```
+
+`code1.lang.json` content:
+```json
+{
+    "srcLang": "en",
+    "translations": [
+        {
+            "en": "hello everyone!!",
+            "fr": "bonjour tout le monde !!",
+            "bzh": "demat d'an holl !!"
+        }
+    ]
+}
+```
+
+`code2.lang.json` content:
+```json
+{
+    "srcLang": "en",
+    "translations": [
+        {
+          "en": "Hello ${}!",
+          "fr": "Bonjour ${} !"
+        }
+    ]
+}
+```
+
 
