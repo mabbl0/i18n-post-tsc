@@ -5,7 +5,7 @@ Same for the static or dynamic mode, the translation data files indicates to the
 
 One data file can include the translation for one or several files.
 
-The data translations files are `json` files, with the `.lang.json` extension.
+The translation data files are `json` files, with the `.lang.json` extension.
 
 ## JSON file format
 

@@ -65,12 +65,12 @@ function processLangFilesData(langFiles: LangFile[], idModuleName: string, dynam
         };
 
         // add possible path to the file
-        if (langFiles[i].data.srcFile != undefined) {
-            if (path.extname(langFiles[i].data.srcFile as string).length == 0) {
-                dynamicLangF.pathToJs.push((langFiles[i].data.srcFile as string) + '.js');
+        if (langFiles[i].data.filePath != undefined) {
+            if (path.extname(langFiles[i].data.filePath as string).length == 0) {
+                dynamicLangF.pathToJs.push((langFiles[i].data.filePath as string) + '.js');
             }
             else {
-                dynamicLangF.pathToJs.push(langFiles[i].data.srcFile as string);
+                dynamicLangF.pathToJs.push(langFiles[i].data.filePath as string);
             }
         }
 

@@ -1,6 +1,6 @@
 # Static Translation
 
-In **static** mode, the `i18n-post-tsc` module reads the data translation files in the source directory, then replace in the JS files the string by their translations.
+To apply a **static** translation, use the `i18n-post-tsc` module in static mode to inject the translation in the JS files, to get zero impact in your code source and zero performance impact.
 
 The static translation is particularly adapted for the open source project with a specific use. For example a open source bot for a private discord server. 
 
@@ -15,8 +15,8 @@ In static mode, the `i18n-post-tsc` command:
 ## Your TS code source
 
 No need to adapt your code source. Write your code as usuall, in your favourite langage.  
-Use the `'`, `"` or ``\`` delimeters for your string.  
-Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/packages/dynamic-translation-post-tsc/documentation/string-interpolation.md): ``\`${}\``
+Use the `'`, `"` or ``` `` delimeters for your string.  
+Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md): ```${}```
 
 Two files can be code in two differents langages.
 But, all the string in one file must be in the same langage. 
@@ -53,7 +53,7 @@ The data translations files are `json` files, with the `.lang.json` extension.
 }
 ```
 
-See the [translation data files](https://github.com/mabbl0/i18n-post-tsc/blob/main/packages/dynamic-translation-post-tsc/documentation/translation-data-files.md) documentation for more detail.
+See the [translation data files documentation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/translation-data-files.md) for more details.
 
 ## The i18n-post-tsc command
 

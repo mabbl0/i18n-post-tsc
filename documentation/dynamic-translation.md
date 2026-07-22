@@ -1,8 +1,7 @@
 # Dynamic Translation
 
-In **dynamic** mode, the `i18n-post-tsc` module reads the data translation files in the source directory, then replace in the JS files the string by a way to access to their translation in run time.
-An intermediary data file is generated, with all the translation needed.  
-Thus, the `dynamic-translation-post-tsc` package must be use, in rum time, to initiate the data and to change the langage to use.
+To apply a **dynamic** translation, use the `i18n-post-tsc` module in dynamic mode to prepapre the JS files and the translation data, and the `dynamic-translation-post-tsc` package in your code to initiate the data and change the langage to use.
+
 
 # Working
 
@@ -17,7 +16,7 @@ At the start execution, the `dynamic-translation-post-tsc` initialization:
 - prepare a base translation for every translation, in the case if wanted langage is not available for some translation
 - and initiate the translation to the started langage 
 
-In run time, the replaced string access to their direct current translation.
+In run time, the replaced string access directly to their current translation.
 
 the `dynamic-translation-post-tsc` package gives the possibility to change the langage.
 
@@ -26,8 +25,8 @@ the `dynamic-translation-post-tsc` package gives the possibility to change the l
 ## Your TS code source
 
 Write your code as usuall, in your favourite langage.  
-Use the `'`, `"` or ``\`` delimeters for your string.  
-Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/packages/dynamic-translation-post-tsc/documentation/string-interpolation.md): ``\`${}\``
+Use the `'`, `"` or ``` `` delimeters for your string.  
+Be free to use the [string interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md): ```${}```
 
 Two files can be code in two differents langages.
 But, all the string in one file must be in the same langage. 
@@ -98,7 +97,7 @@ The data translations files are `json` files, with the `.lang.json` extension.
 }
 ```
 
-See the [translation data files](https://github.com/mabbl0/i18n-post-tsc/blob/main/packages/dynamic-translation-post-tsc/documentation/translation-data-files.md) documentation for more detail.
+See the [translation data files documentation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/translation-data-files.md) for more details.
 
 ## The i18n-post-tsc command
 

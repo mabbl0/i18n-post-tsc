@@ -4,7 +4,7 @@
 To translate your string using string interpolation use the `"${}"` indication in the translation data file.  
 
 If the variable call in the string interpolation have the same order in every langage, the `"${}"` indication can stay empty.  
-But if the varaible order is different bewteen two langage, use the an id in the `"${}"` indication.
+But if the variable order is different bewteen two langages, use the an id in the `"${}"` indication.
 
 ## Static mode
 

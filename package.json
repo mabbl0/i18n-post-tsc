@@ -1,7 +1,7 @@
 {
   "name": "i18n-post-tsc",
   "version": "0.1.0",
-  "description": "Inject your translations directly into your compiled JS, so you write your TS as if i18n never existed",
+  "description": "Inject your translations directly into your compiled JS, for a static or dynamic translation, with a minimum impact",
   "keywords": [
     "ts",
     "tsc",
@@ -35,11 +35,9 @@
     "node": ">=25.8.1"
   },
   "files": [
-    "./packages/i18n-post-tsc/dist"
+    "./dist"
   ],
-  "types": "./packages/i18n-post-tsc/dist/index.d.ts",
-  "main": "./packages/i18n-post-tsc/dist/index.js",
-  "bin": "./packages/i18n-post-tsc/dist/bin/i18n-post-tsc.js",
+  "bin": "./dist/bin/i18n-post-tsc.js",
   "scripts": {
     "build": "npm run build:post && npm run build:dyn",
     "build:post": "tsc -p tsconfig.build.i18n-post-tsc.json",

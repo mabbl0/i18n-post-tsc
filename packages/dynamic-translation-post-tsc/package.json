@@ -1,6 +1,14 @@
 {
   "name": "dynamic-translation",
   "version": "0.1.0",
+  "description": "Apply a dynamic translation, with a minimum impact. Use with the 'i18n-post-tsc' module",
+  "keywords": [
+    "ts",
+    "tsc",
+    "i18n",
+    "translation",
+    "dynamic translation"
+  ],
   
   "license": "MIT",
   "author": "mabbl0",
@@ -8,8 +16,7 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "dts-bundle-generator": "^9.5.1",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=25.8.1"

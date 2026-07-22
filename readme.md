@@ -3,14 +3,17 @@
 `i18n-post-tsc` is a simple i18n (internationalization / translation) package for your TS project.  
 The idea is to inject the translation after the tsc compilation into the JS code, to not impact your TS code.
 
+Thus, the `i18n-post-tsc` module can apply a **Static** or **Dynamic** translation.  
+For the **Dynamic** translation you need to use the `dynamic-translation-post-tsc` package.
+
 `i18n-post-tsc` features:  
-- Simple and low execution impact.
-- Easy to implement. Minimum impact with your existing code.
+- Simple and zero performance impact.
+- Easy to implement. Zero impact in your existing code.
 - **Static translation**. Inject the target translation once after the tsc.  
 Perfect for an open source project with a specific usage.
 - **Dynamic translation**. The access to the translation is injected in the JS files. You just need to initiation and change the langage in run time.
 - Switch easily between the Static and Dynamic translation mode.
-- String interpolation "`${}`" translation in static and dynamic mode.
+- [String interpolation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/string-interpolation.md) "`${}`" translation in static and dynamic mode.
 - Translation data file to contain the translation for one or several files.
 
 
@@ -40,7 +43,7 @@ const userName = "Jean";
 console.log(`Hello ${userName}!`); // "Bonjour Jean !!"
 ```
 
-Add a translate file index.lang.json:
+Add a [translation data file](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/translation-data-files.md):
 ```json
 {
     "filePath": "code.js",
@@ -66,21 +69,20 @@ Compile your TS project to obtain the JS code files:
 npx tsc
 ```
 
-Then, run the `i18n-post-tsc` command with the `static` mode to apply the translation in your JS code.  
-Indicate the source directory, the JS output directory, and the target translation.
+Then, run the `i18n-post-tsc` command with the `static` mode to apply the translation in your JS code:
 
 ```
 npx i18n-post-tsc --mode static --srcDir src --outDir dist --outLang fr
 ```
 
-The module reads the translation files in the source directory, and replace the string in the JS files output with the target translation.
-Your project is translate.
+The module replaces the string in the JS files output by their translation.
 
-You can indicate some fallback langages, if the translation is not available for target translation.
+See the [static translation documentation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/static-translation.md) for more details.
 
 ## Dynamic translation
 
-Add an initiation to the `dynamic-translation-post-tsc` module at the start of your project, and a way to change the langage:
+Use in your code the `dynamic-translation-post-tsc` module to initiate the data, and to change the target langage:
+
 ```ts
 // src/code.ts
 import dynamic_translation_post_tsc from "dynamic-translation-post-tsc";
@@ -101,14 +103,13 @@ Compile your TS project to obtain the JS code files:
 npx tsc
 ```
 
-Then, run the `i18n-post-tsc` command with the `dynamic` mode to apply the translation in your JS code.  
-Indicate the source directory and the JS output directory.
+Then, run the `i18n-post-tsc` command with the `dynamic` mode to apply the translation in your JS code:
 
 ```
 npx i18n-post-tsc --mode dynamic --srcDir src --outDir dist
 ```
 
-The `i18n-post-tsc` reads the translation files in the source directory, save the data in a dynamic translation file data, and replace the string in the JS files to access to the dynamic translation in run time.  
-In run time, the initialization of the `dynamic-translation-post-tsc` module reads the dynamic translation file data, and apply the wanted langage. The replaced string access to the current translation.
+The `i18n-post-tsc` module replace the string in your JS files to access to their current translation.  
+In run time, the `dynamic-translation-post-tsc` module initiates the data, and enables the replaced string to access to their current translation.
 
-See the [dynamic-translation-post-tsc readme](https://github.com/mabbl0/i18n-post-tsc/blob/main/packages/dynamic-translation-post-tsc/readme.md) for more details about dynamic translation.
+See the [dynamic translation documentation](https://github.com/mabbl0/i18n-post-tsc/blob/main/documentation/dynamic-translation.md) for more details.
