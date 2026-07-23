@@ -73,7 +73,7 @@ The arguments for the static mode command:
 - outDir: indicate directory path to the JS files with the string to translate. Required
 - outLang: indicate the langage to translate. Required
 
-- overrideOutFile: override every output JS files to a unique output JS file (index.js for example). Not Required
+- uniqueOutFile: indicate a unique output JS files (index.js for example). Not Required
 - fallbackLang: indicate the fallback langages, in the case if the target langage is not available for some translation. Not required
 
 

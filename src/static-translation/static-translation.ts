@@ -14,7 +14,7 @@ import { StaticStrInterpolationTr } from "./static-str-interpolation-tr";
  */
 export function staticTranslation(staticTrParam: StaticTranslationParam) {
     log(LogLevel.Verbose, `Static Translation of the '${staticTrParam.srcDir}' source path`);
-    readLangFiles(staticTrParam.srcDir, staticTrParam.overrideOutFile, langFiles => {
+    readLangFiles(staticTrParam.srcDir, staticTrParam.uniqueOutFile, langFiles => {
         let staticLangFiles = prepareTranslationData(langFiles, staticTrParam);
         let distAbsPath = path.resolve(staticTrParam.outDir);
 

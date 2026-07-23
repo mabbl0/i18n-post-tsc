@@ -116,7 +116,7 @@ The arguments for the dynamic mode command:
 - srcDir: indicate directory path to find the translation data files. Required
 - outDir: indicate directory path to the JS files with the string to translate. Required
 
-- overrideOutFile: override every output JS files to a unique output JS file (index.js for example). Not Required
+- uniqueOutFile: indicate a unique output JS files (index.js for example). Not Required
 - dynamicTrData: indicate the path from the outDir, to save the data file for the dynamic translation. "dynamicTrData.lang.json" by default. Not required
 - idModuleName: indicate an identifier name to add to every translation id. Not required
 

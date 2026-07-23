@@ -44,7 +44,7 @@ console.log(`The ${userName1}'s ${nbCow1} cows`);
 console.log(`The ${userName2}'s ${nbCow2} cows`);
 ```
 
-To obtain, for example, in the JS file:
+Become in the JS file:
 ```js
 // dist/code.js
 console.log( dynamic_translation_post_tsc_1.translate.code_0?.with(userName1, nbCow1) );

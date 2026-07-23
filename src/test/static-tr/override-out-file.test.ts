@@ -5,7 +5,7 @@ import fs from 'fs';
 
 const pathToTestDir = './src/test/static-tr/files-to-test-override';
 const pathToTmpDir = pathToTestDir + '-tmp';
-const overrideOutFile = "index.js";
+const uniqueOutFile = "index.js";
 setLogLevel(LogLevel.None);
 
 describe('Static File Translation', () => {
@@ -18,7 +18,7 @@ describe('Static File Translation', () => {
         staticTranslation({
             srcDir: pathToTmpDir,
             outDir: pathToTmpDir,
-            overrideOutFile: overrideOutFile,
+            uniqueOutFile: uniqueOutFile,
             outLang: 'bzh',
             fallbackLang: ['fr']
         });
@@ -27,7 +27,7 @@ describe('Static File Translation', () => {
         await new Promise(resolve => setTimeout(resolve, 100));
         
         /** The simple translation **/
-        let file = fs.readFileSync(pathToTmpDir + '/' + overrideOutFile).toString();
+        let file = fs.readFileSync(pathToTmpDir + '/' + uniqueOutFile).toString();
         // the correct bzh translation
         expect(file.indexOf("Demat d'an holl !")).to.not.equal(-1);
         // the fr fallback translation if no bzh translation

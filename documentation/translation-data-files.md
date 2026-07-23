@@ -154,9 +154,12 @@ Project organisation for this example:
 ```
 
 
-### multiple translation data files with overrideOutFile
+### multiple translation data files with a unique output file
 
-The `i18n-post-tsc` command is run with the parameter: `--overrideOutFile index.js`
+In dynamic or static mode, the `i18n-post-tsc` command can be ran with the `uniqueOutFile` parameter:
+```
+npx i18n-post-tsc --mode dynamic --srcDir src --outDir dist --uniqueOutFile index.js
+```
 
 Project organisation for this example:
 ```

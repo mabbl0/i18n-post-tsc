@@ -26,7 +26,7 @@ export function dynamicTranslationPostTsc(dynamicParameter: DynamicTranslationPa
     log(LogLevel.Verbose, `Dynamic Translation Post tsc for the '${dynamicParameter.srcDir}' source path`);
     
     let idModuleName = idModuleNameToIdentifer(dynamicParameter.idModuleName);
-    readLangFiles(dynamicParameter.srcDir, dynamicParameter.overrideOutFile, langFiles => {
+    readLangFiles(dynamicParameter.srcDir, dynamicParameter.uniqueOutFile, langFiles => {
         let dynamicLangFiles: PtscDynamicLangFile[] = [];
         let dynamicTranslationJson: DynamicTranslationDataJson = {
             data: []
